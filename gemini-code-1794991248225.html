@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html class="dark" lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>Sistem Informasi Masjid Al Muhajirin</title>
+<link rel="manifest" href='data:application/manifest+json,{"name":"SIM Masjid Al Muhajirin","short_name":"Al Muhajirin","start_url":".","display":"standalone","background_color":"#091612","theme_color":"#0E2019","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/2319/2319870.png","sizes":"512x512","type":"image/png"}]}' />
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "background": "#091612",
+        "surface": "#0E2019",
+        "surface-container": "#16221e",
+        "surface-container-high": "#202d28",
+        "surface-container-highest": "#2b3733",
+        "surface-container-lowest": "#05100d",
+        "primary": "#f2c467",
+        "primary-container": "#d4a94f",
+        "on-primary": "#402d00",
+        "on-primary-container": "#261900",
+        "accent-emerald": "#4ADE80",
+        "text-primary": "#F3EEDC",
+        "text-muted": "#A2B3AA",
+        "on-surface": "#d8e6de",
+        "on-surface-variant": "#d2c5b2",
+        "border-gold": "rgba(212, 169, 79, 0.22)",
+        "border-gold-strong": "rgba(212, 169, 79, 0.45)",
+        "danger": "#F87171"
+      },
+      fontFamily: {
+        "serif": ["Playfair Display", "Georgia", "serif"],
+        "sans": ["Plus Jakarta Sans", "system-ui", "sans-serif"],
+        "arabic": ["Amiri", "Traditional Arabic", "serif"]
+      }
+    }
+  }
+};
+</script>
+<style>
+  #app-root {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background-color: #091612;
+    color: #d8e6de;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    scroll-behavior: smooth;
+  }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #091612; }
+  ::-webkit-scrollbar-thumb { background: #202d28; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #d4a94f; }
+  .gold-border { border: 1px solid rgba(212, 169, 79, 0.22); }
+  .gold-border-strong { border: 1px solid rgba(212, 169, 79, 0.45); }
+  .emerald-border { border: 1px solid rgba(74, 222, 128, 0.35); }
+  .glass-header { background: rgba(14, 32, 25, 0.88); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+  body:not(.is-admin) .admin-only { display: none !important; }
+  .arabic-text { font-family: 'Amiri', serif; line-height: 2.3; }
+</style>
+</head>
+<body class="bg-background text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container">
+
+<div id="app-root">
+  <!-- BANNER PREVIEW -->
+  <div id="preview-banner" class="bg-amber-500/20 border-b border-amber-400/40 text-amber-200 px-4 py-2 text-xs font-medium flex flex-wrap items-center justify-between gap-2 sticky top-0 z-[60] backdrop-blur-md">
+    <div class="flex items-center gap-2">
+      <span class="material-symbols-outlined text-[16px] text-primary">cloud_done</span>
+      <span><strong>MODE PREVIEW AKTIF (Cloudflare Ready):</strong> Ubah <code class="bg-black/40 px-1.5 py-0.5 rounded text-primary">IS_PREVIEW = false</code> & isi <code class="bg-black/40 px-1.5 py-0.5 rounded text-primary">WORKER_URL</code> saat deploy.</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="quickLogin('admin')" class="px-2.5 py-1 rounded bg-primary text-on-primary-container font-semibold hover:bg-amber-300 transition">Quick Admin</button>
+      <button onclick="quickLogin('petugas')" class="px-2.5 py-1 rounded bg-surface-container-high text-text-primary border border-primary/40 hover:bg-surface-container-highest transition">Quick Petugas</button>
+    </div>
+  </div>
+
+  <!-- TOP HEADER NAVIGATION -->
+  <header class="sticky top-0 left-0 right-0 z-50 glass-header border-b border-border-gold shadow-[0_4px_24px_rgba(0,0,0,0.4)]">
+    <div class="h-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3 cursor-pointer" onclick="navigasi('beranda')">
+        <div class="w-10 h-10 rounded-xl bg-surface-container-high gold-border flex items-center justify-center text-primary shadow-inner">
+          <span class="material-symbols-outlined text-[24px]">mosque</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-serif text-lg sm:text-xl font-bold text-primary tracking-wide leading-none">Masjid Al Muhajirin</span>
+          <span class="text-[10px] font-semibold text-text-muted tracking-widest uppercase mt-1">Sistem Informasi Terpadu</span>
+        </div>
+      </div>
+
+      <nav class="hidden xl:flex items-center gap-6" id="desktop-nav">
+        <button onclick="navigasi('beranda')" data-nav="beranda" class="nav-link text-primary font-semibold border-b-2 border-primary-container pb-1 text-sm transition-colors">Beranda</button>
+        <button onclick="navigasi('quran')" data-nav="quran" class="nav-link text-on-surface-variant hover:text-primary text-sm font-medium transition-colors">Al-Qur'an</button>
+        <button onclick="navigasi('hadits')" data-nav="hadits" class="nav-link text-on-surface-variant hover:text-primary text-sm font-medium transition-colors">Hadits</button>
+        <button onclick="navigasi('jurnal')" data-nav="jurnal" class="nav-link text-on-surface-variant hover:text-primary text-sm font-medium transition-colors">Jurnal</button>
+        <button onclick="navigasi('khutbah')" data-nav="khutbah" class="nav-link text-on-surface-variant hover:text-primary text-sm font-medium transition-colors">Khutbah</button>
+        <button onclick="navigasi('jadwal')" data-nav="jadwal" class="nav-link text-on-surface-variant hover:text-primary text-sm font-medium transition-colors">Jadwal</button>
+        <button onclick="navigasi('qurban')" data-nav="qurban" class="nav-link text-on-surface-variant hover:text-primary text-sm font-medium transition-colors">Qurban</button>
+        <button onclick="navigasi('kas')" data-nav="kas" class="nav-link text-on-surface-variant hover:text-primary text-sm font-medium transition-colors">Kas</button>
+        <button onclick="navigasi('ai')" data-nav="ai" class="nav-link admin-only text-accent-emerald hover:text-primary text-sm font-medium transition-colors">Asisten AI</button>
+        <button onclick="navigasi('pengaturan')" data-nav="pengaturan" class="nav-link admin-only text-on-surface-variant hover:text-primary text-sm font-medium transition-colors">Pengaturan</button>
+      </nav>
+
+      <div class="flex items-center gap-3">
+        <span id="badge-user" class="hidden text-xs font-semibold px-3 py-1.5 rounded-full bg-surface-container gold-border text-primary"></span>
+        <button id="btn-header-login" onclick="navigasi('login')" class="inline-flex items-center justify-center px-5 py-2 rounded-xl bg-primary-container text-on-primary-container font-semibold text-xs sm:text-sm shadow-[0_0_16px_rgba(212,169,79,0.25)] hover:bg-primary transition-all">Login</button>
+        <button id="btn-header-logout" onclick="handleLogout()" class="hidden items-center gap-1.5 px-4 py-2 rounded-xl bg-surface-container hover:bg-red-950/60 text-danger border border-red-500/30 font-semibold text-xs sm:text-sm transition-all">
+          <span class="material-symbols-outlined text-[16px]">logout</span>
+          <span>Keluar</span>
+        </button>
+        <div class="w-9 h-9 rounded-full bg-primary/20 gold-border flex items-center justify-center text-primary">
+          <span class="material-symbols-outlined text-[18px]">person</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 pt-8 pb-28">
+
+    <!-- ==================== 1. HALAMAN BERANDA ==================== -->
+    <div id="page-beranda" class="page-section space-y-14">
+      <section class="relative w-full rounded-2xl bg-surface p-8 sm:p-12 lg:p-16 shadow-lg overflow-hidden gold-border">
+        <div class="absolute inset-0 opacity-[0.04] pointer-events-none" style="background-image: radial-gradient(circle at 50% 50%, #d4a94f 1px, transparent 1px); background-size: 24px 24px;"></div>
+        <div class="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto">
+          <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-surface-container mb-6 gold-border">
+            <span class="w-2 h-2 rounded-full bg-accent-emerald animate-pulse"></span>
+            <span class="text-[11px] font-semibold text-text-muted tracking-widest uppercase">Portal Informasi & Dakwah</span>
+          </div>
+          <p class="font-serif text-xl sm:text-2xl text-primary mb-3">Assalamu'alaikum Warahmatullahi Wabarakatuh</p>
+          <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold text-text-primary tracking-tight mb-5" id="hero-nama-masjid">Masjid Al Muhajirin</h1>
+          <p class="text-base sm:text-lg text-text-muted max-w-2xl leading-relaxed">
+            Membina Umat Menuju <span class="text-accent-emerald font-semibold">Keberkahan</span> dan Ketenangan Hati
+          </p>
+          <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <a href="#jadwal-shalat-section" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary-container text-on-primary-container font-semibold text-sm transition-colors hover:bg-primary">
+              <span class="material-symbols-outlined text-[20px]">schedule</span>
+              <span>Jadwal Shalat Hari Ini</span>
+            </a>
+            <button onclick="navigasi('jadwal')" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-transparent text-text-primary font-semibold text-sm transition-colors hover:bg-surface-container gold-border-strong">
+              <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+              <span>Agenda & Kegiatan</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- JADWAL SHALAT & COUNTDOWN -->
+      <section id="jadwal-shalat-section" class="w-full">
+        <div class="w-full rounded-2xl bg-surface p-6 sm:p-8 shadow-md gold-border">
+          <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 pb-6 mb-8 border-b border-border-gold">
+            <div>
+              <div class="flex items-center gap-2 text-primary mb-1">
+                <span class="material-symbols-outlined text-[22px]">calendar_today</span>
+                <span class="font-serif text-xl font-bold">Waktu Shalat & Imsakiyah</span>
+              </div>
+              <p class="text-sm text-text-muted" id="label-lokasi-sholat">Memuat tanggal & kawasan...</p>
+            </div>
+            <div class="flex items-center gap-4 px-5 py-3 rounded-xl bg-surface-container gold-border">
+              <div class="flex flex-col text-right">
+                <span class="text-[11px] font-semibold text-text-muted uppercase tracking-wider" id="next-prayer-name">Menuju Shalat Berikutnya</span>
+                <span class="text-xl font-bold text-primary tabular-nums" id="countdown-timer">00 : 00 : 00</span>
+              </div>
+              <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined text-[24px]">hourglass_top</span>
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5" id="prayer-times-grid"></div>
+        </div>
+      </section>
+
+      <!-- 5-SLIDE CAROUSEL WARTA & PROGRAM -->
+      <section class="w-full">
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-6">
+          <div>
+            <span class="text-[11px] font-semibold text-accent-emerald uppercase tracking-widest">Informasi Utama</span>
+            <h2 class="font-serif text-2xl sm:text-3xl font-bold text-text-primary mt-1">Warta & Program Masjid</h2>
+          </div>
+          <div class="flex items-center gap-3 mt-4 md:mt-0">
+            <button onclick="geserCarousel(-1)" class="w-10 h-10 rounded-xl bg-surface flex items-center justify-center text-text-primary hover:text-primary hover:bg-surface-container transition-colors gold-border" type="button">
+              <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            </button>
+            <button onclick="geserCarousel(1)" class="w-10 h-10 rounded-xl bg-surface flex items-center justify-center text-text-primary hover:text-primary hover:bg-surface-container transition-colors gold-border" type="button">
+              <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+        <div class="relative w-full rounded-2xl overflow-hidden bg-surface shadow-md gold-border">
+          <div class="relative w-full min-h-[360px] sm:min-h-[420px]" id="carousel-container"></div>
+          <div class="relative z-20 px-6 sm:px-10 py-4 bg-surface-container flex items-center justify-between border-t border-border-gold">
+            <div class="flex items-center gap-2" id="carousel-dots"></div>
+            <span class="text-xs font-semibold text-text-muted tabular-nums" id="carousel-counter">01 / 05</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- BENTO GRID AKSES CEPAT -->
+      <section class="w-full">
+        <div class="mb-6">
+          <span class="text-[11px] font-semibold text-accent-emerald uppercase tracking-widest">Layanan Terpadu</span>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-text-primary mt-1">Akses Cepat Pembinaan & Kajian</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div onclick="navigasi('quran')" class="cursor-pointer group relative rounded-2xl bg-surface p-7 flex flex-col justify-between overflow-hidden transition-all duration-200 hover:bg-surface-container lg:col-span-2 gold-border">
+            <div class="flex items-start justify-between gap-4 mb-8">
+              <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary group-hover:scale-105 transition-transform gold-border">
+                <span class="material-symbols-outlined text-[26px]">menu_book</span>
+              </div>
+              <span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors text-[20px]">north_east</span>
+            </div>
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-[11px] font-semibold text-primary uppercase tracking-wider">Mushaf Standar & Audio</span>
+                <span class="w-1 h-1 rounded-full bg-primary"></span>
+                <span class="text-[11px] font-semibold text-text-muted">30 Juz • 114 Surah</span>
+              </div>
+              <h3 class="font-serif text-2xl font-bold text-text-primary mb-2 group-hover:text-primary transition-colors">Al-Qur'an Digital & Murottal</h3>
+              <p class="text-sm text-text-muted max-w-xl">
+                Teks mushaf terjemah resmi Kementerian Agama RI dilengkapi audio murottal per-surah qari internasional, teks latin, dan penanda ayat.
+              </p>
+            </div>
+          </div>
+
+          <div onclick="navigasi('hadits')" class="cursor-pointer group relative rounded-2xl bg-surface p-7 flex flex-col justify-between overflow-hidden transition-all duration-200 hover:bg-surface-container gold-border">
+            <div class="flex items-start justify-between gap-4 mb-8">
+              <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary group-hover:scale-105 transition-transform gold-border">
+                <span class="material-symbols-outlined text-[26px]">library_books</span>
+              </div>
+              <span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors text-[20px]">north_east</span>
+            </div>
+            <div>
+              <span class="text-[11px] font-semibold text-primary uppercase tracking-wider block mb-2">Sunnah Nabawiyah</span>
+              <h3 class="font-serif text-xl font-bold text-text-primary mb-2 group-hover:text-primary transition-colors">Koleksi Hadits</h3>
+              <p class="text-xs text-text-muted leading-relaxed">
+                Ensiklopedi kitab hadits mutabar lengkap dengan teks Arab berharakat, terjemah bahasa Indonesia, dan faedah ilmiah.
+              </p>
+            </div>
+          </div>
+
+          <div onclick="navigasi('jurnal')" class="cursor-pointer group relative rounded-2xl bg-surface p-7 flex flex-col justify-between overflow-hidden transition-all duration-200 hover:bg-surface-container gold-border">
+            <div class="flex items-start justify-between gap-4 mb-8">
+              <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary group-hover:scale-105 transition-transform gold-border">
+                <span class="material-symbols-outlined text-[26px]">article</span>
+              </div>
+              <span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors text-[20px]">north_east</span>
+            </div>
+            <div>
+              <span class="text-[11px] font-semibold text-primary uppercase tracking-wider block mb-2">Pustaka Ilmiah</span>
+              <h3 class="font-serif text-xl font-bold text-text-primary mb-2 group-hover:text-primary transition-colors">Jurnal & Makalah</h3>
+              <p class="text-xs text-text-muted leading-relaxed">
+                Publikasi ilmiah keislaman, risalah fikih kontemporer, dan edisi arsip buletin dakwah mingguan Jumat.
+              </p>
+            </div>
+          </div>
+
+          <div onclick="navigasi('khutbah')" class="cursor-pointer group relative rounded-2xl bg-surface p-7 flex flex-col justify-between overflow-hidden transition-all duration-200 hover:bg-surface-container gold-border">
+            <div class="flex items-start justify-between gap-4 mb-8">
+              <div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-primary group-hover:scale-105 transition-transform gold-border">
+                <span class="material-symbols-outlined text-[26px]">record_voice_over</span>
+              </div>
+              <span class="material-symbols-outlined text-text-muted group-hover:text-primary transition-colors text-[20px]">north_east</span>
+            </div>
+            <div>
+              <span class="text-[11px] font-semibold text-primary uppercase tracking-wider block mb-2">Mimbar Jumat</span>
+              <h3 class="font-serif text-xl font-bold text-text-primary mb-2 group-hover:text-primary transition-colors">Arsip Khutbah</h3>
+              <p class="text-xs text-text-muted leading-relaxed">
+                Transkrip naskah khutbah Jumat lengkap dari para asatidz dan khatib tamu untuk rujukan muhasabah keluarga.
+              </p>
+            </div>
+          </div>
+
+          <div onclick="navigasi('qurban')" class="cursor-pointer group relative rounded-2xl bg-surface-container-high p-7 flex flex-col justify-between overflow-hidden transition-all duration-200 hover:bg-surface-container gold-border-strong">
+            <div class="flex items-start justify-between gap-4 mb-8">
+              <div class="w-12 h-12 rounded-xl bg-surface flex items-center justify-center text-accent-emerald group-hover:scale-105 transition-transform emerald-border">
+                <span class="material-symbols-outlined text-[26px]">savings</span>
+              </div>
+              <span class="px-2.5 py-0.5 rounded-full bg-surface text-accent-emerald text-[10px] font-semibold uppercase tracking-wider emerald-border">Program Umat</span>
+            </div>
+            <div>
+              <span class="text-[11px] font-semibold text-accent-emerald uppercase tracking-wider block mb-2">Ibadah Idul Adha</span>
+              <h3 class="font-serif text-xl font-bold text-text-primary mb-2 group-hover:text-primary transition-colors">Tabungan Qurban</h3>
+              <p class="text-xs text-text-muted leading-relaxed">
+                Layanan perencanaan dan pemantauan tabungan qurban jamaah secara transparan, terintegrasi, dan amanah.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAUSIYAH HARI INI -->
+      <section class="w-full">
+        <div class="w-full rounded-2xl bg-surface p-8 sm:p-10 shadow-md relative overflow-hidden gold-border">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-2.5">
+              <span class="material-symbols-outlined text-primary text-[24px]">format_quote</span>
+              <h2 class="font-serif text-xl font-bold text-primary">Tausiyah Hari Ini</h2>
+            </div>
+            <button onclick="acakTausiyah()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-surface-container text-text-primary hover:text-primary hover:bg-surface-container-high transition-colors text-xs font-semibold self-start md:self-auto gold-border" type="button">
+              <span class="material-symbols-outlined text-[18px]">refresh</span>
+              <span>Muat Ulang</span>
+            </button>
+          </div>
+          <div class="max-w-4xl py-2" id="tausiyah-box">
+            <blockquote class="font-serif text-xl sm:text-2xl text-text-primary italic leading-relaxed mb-4" id="tausiyah-quote">
+              “Barangsiapa yang membangun masjid karena Allah, niscaya Allah akan membangunkan untuknya rumah di surga.”
+            </blockquote>
+            <cite class="text-sm font-semibold text-text-muted not-italic flex items-center gap-2">
+              <span class="w-5 h-px bg-primary"></span>
+              <span id="tausiyah-source">HR. Bukhari & Muslim</span>
+            </cite>
+          </div>
+        </div>
+      </section>
+
+      <!-- KONTAK & LOKASI -->
+      <section class="w-full">
+        <div class="mb-6">
+          <span class="text-[11px] font-semibold text-accent-emerald uppercase tracking-widest">Informasi Sekretariat</span>
+          <h2 class="font-serif text-2xl sm:text-3xl font-bold text-text-primary mt-1">Kontak & Lokasi Masjid</h2>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 rounded-2xl bg-surface p-6 sm:p-8 shadow-md gold-border">
+          <div class="lg:col-span-5 flex flex-col justify-between space-y-6">
+            <div class="space-y-5">
+              <div>
+                <span class="text-[11px] font-semibold text-text-muted uppercase tracking-widest block mb-2">Layanan Administrasi</span>
+                <h3 class="font-serif text-2xl font-bold text-text-primary mb-2">Sekretariat DKM Al Muhajirin</h3>
+                <p class="text-sm text-text-muted leading-relaxed">
+                  Pintu sekretariat terbuka setiap hari pukul 08.00 - 20.30 WIB untuk pelayanan konsultasi wakaf, pendaftaran santunan, dan infaq operasional dakwah.
+                </p>
+              </div>
+              <div class="p-4 rounded-xl bg-surface-container flex items-start gap-4 gold-border">
+                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-accent-emerald shrink-0">
+                  <span class="material-symbols-outlined text-[22px]">chat</span>
+                </div>
+                <div>
+                  <span class="text-[11px] font-semibold text-text-muted uppercase tracking-wider block">WhatsApp Resmi Sekretariat</span>
+                  <a id="kontak-wa-link" href="https://wa.me/6281234567890" target="_blank" class="text-base font-bold text-text-primary hover:text-primary mt-0.5 block">0812-3456-7890</a>
+                  <span class="text-xs text-accent-emerald mt-1 block">Tersedia pada jam kerja DKM</span>
+                </div>
+              </div>
+              <div class="p-4 rounded-xl bg-surface-container flex items-start gap-4 gold-border">
+                <div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary shrink-0">
+                  <span class="material-symbols-outlined text-[22px]">location_on</span>
+                </div>
+                <div>
+                  <span class="text-[11px] font-semibold text-text-muted uppercase tracking-wider block">Alamat Lengkap</span>
+                  <address id="kontak-alamat-teks" class="not-italic text-xs text-on-surface-variant leading-relaxed mt-1">
+                    Jl. Melati Raya No. 45, Kompleks Graha Indah, Jakarta Timur
+                  </address>
+                </div>
+              </div>
+            </div>
+            <div class="pt-2">
+              <a id="kontak-peta-btn" href="https://maps.google.com" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2.5 w-full py-3.5 px-6 rounded-xl bg-surface-container hover:bg-surface-container-high text-primary font-semibold text-sm transition-all gold-border-strong">
+                <span class="material-symbols-outlined text-[20px]">explore</span>
+                <span>Buka Google Maps</span>
+              </a>
+            </div>
+          </div>
+          <div class="lg:col-span-7 flex flex-col">
+            <div class="relative w-full h-[320px] lg:h-full min-h-[300px] rounded-xl overflow-hidden bg-surface-container gold-border">
+              <iframe class="w-full h-full border-0 filter invert-[90%] hue-rotate-180 contrast-125" loading="lazy" src="https://maps.google.com/maps?q=Masjid%20Al%20Muhajirin%20Jakarta&t=&z=15&ie=UTF8&iwloc=&output=embed"></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ==================== 2. HALAMAN AL-QUR'AN & MUROTTAL ==================== -->
+    <div id="page-quran" class="page-section hidden space-y-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-2 text-xs text-text-muted">
+          <span class="cursor-pointer hover:text-primary" onclick="navigasi('beranda')">Beranda</span>
+          <span>›</span>
+          <span class="text-primary font-semibold">Al-Qur'an Digital</span>
+        </div>
+        <span class="text-[11px] px-3 py-1 rounded-full bg-surface gold-border text-accent-emerald font-semibold">● Mushaf Madinah & Terjemah Kemenag RI</span>
+      </div>
+
+      <div class="rounded-2xl bg-surface p-6 sm:p-8 gold-border relative overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+          <div class="lg:col-span-8 space-y-3">
+            <div class="flex flex-wrap items-center gap-2 text-xs text-text-muted">
+              <span class="px-2.5 py-0.5 rounded bg-primary/20 text-primary font-bold uppercase" id="quran-active-nomor">SURAH KE-18</span>
+              <span>•</span>
+              <span id="quran-active-turun">Golongan Makkiyah</span>
+              <span>•</span>
+              <span id="quran-active-jumlah">110 Ayat</span>
+            </div>
+            <div class="flex items-baseline gap-4">
+              <h1 class="font-serif text-3xl sm:text-4xl font-bold text-text-primary" id="quran-active-nama">Surah Al-Kahf</h1>
+              <span class="arabic-text text-3xl text-primary" id="quran-active-arab">الكهف</span>
+            </div>
+            <p class="text-sm text-primary italic" id="quran-active-arti">"Para Penghuni Gua"</p>
+          </div>
+          <div class="lg:col-span-4 flex flex-col items-center justify-center p-5 rounded-xl bg-surface-container gold-border text-center">
+            <span class="material-symbols-outlined text-primary text-3xl mb-1">auto_stories</span>
+            <span class="arabic-text text-2xl text-text-primary" id="quran-box-arab">سورة الكهف</span>
+            <span class="text-[11px] text-text-muted mt-1">Tilawah Murottal Penuh Per-Surah</span>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-5 border-t border-border-gold flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-container/70 p-4 rounded-xl">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary-container shrink-0">
+              <span class="material-symbols-outlined">graphic_eq</span>
+            </div>
+            <div>
+              <div class="text-sm font-bold text-text-primary flex items-center gap-2">
+                <span id="audio-surah-title">Murottal Surah Al-Kahf</span>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-accent-emerald/20 text-accent-emerald">Full Audio</span>
+              </div>
+              <p class="text-xs text-text-muted">Qari: Syaikh Misyari Rasyid Al-Afasy</p>
+            </div>
+          </div>
+          <audio id="quran-audio-player" controls class="w-full sm:w-96 h-10 rounded-lg"></audio>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-4 rounded-2xl bg-surface p-4 gold-border space-y-4 lg:sticky lg:top-24">
+          <div class="relative">
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-text-muted text-[20px]">search</span>
+            <input id="cari-surah-input" oninput="filterDaftarSurah()" type="text" placeholder="Cari nama atau nomor surah..." class="w-full pl-10 pr-4 py-2 rounded-xl bg-surface-container gold-border text-sm text-text-primary focus:outline-none focus:border-primary"/>
+          </div>
+          <div id="list-surah-sidebar" class="space-y-2 max-h-[65vh] overflow-y-auto pr-1">
+            <div class="p-6 text-center text-sm text-text-muted">Memuat 114 Surah...</div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-8 space-y-4">
+          <div class="rounded-xl bg-surface p-4 gold-border flex flex-wrap items-center justify-between gap-3">
+            <span class="text-xs font-semibold text-text-muted" id="status-jumlah-ayat">Menampilkan seluruh ayat</span>
+            <div class="flex items-center gap-4 text-xs">
+              <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                <input type="checkbox" id="toggle-latin" checked onchange="renderAyatAktif()" class="accent-primary"/>
+                <span>Teks Latin</span>
+              </label>
+              <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                <input type="checkbox" id="toggle-terjemah" checked onchange="renderAyatAktif()" class="accent-primary"/>
+                <span>Terjemahan</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-surface p-6 text-center gold-border">
+            <p class="arabic-text text-2xl sm:text-3xl text-primary mb-2">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</p>
+            <p class="text-xs text-text-muted italic">"Dengan nama Allah Yang Maha Pengasih, Maha Penyayang."</p>
+          </div>
+
+          <div id="list-ayat-container" class="space-y-4"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 3. HALAMAN HADITS ==================== -->
+    <div id="page-hadits" class="page-section hidden space-y-8">
+      <div class="space-y-2">
+        <span class="inline-block px-3 py-1 rounded-full bg-surface text-accent-emerald text-[10px] font-semibold uppercase tracking-widest gold-border">● Pustaka Sunnah Nabawiyah • Terverifikasi Sanad</span>
+        <h1 class="font-serif text-3xl sm:text-4xl font-bold text-text-primary">Ensiklopedi & Koleksi Hadits Pilihan</h1>
+        <p class="text-sm text-text-muted max-w-2xl">Mempelajari sabda Rasulullah ﷺ melalui kitab-kitab hadits mutabar lengkap dengan teks Arab berharakat dan terjemah bahasa Indonesia.</p>
+      </div>
+
+      <div class="rounded-2xl bg-surface p-5 gold-border space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="text-[11px] font-semibold text-text-muted uppercase tracking-wider">Pilih Kitab Rujukan Utama</span>
+          <span class="text-xs text-primary" id="info-kitab-aktif">Memuat kitab...</span>
+        </div>
+        <div class="flex flex-wrap gap-2" id="kitab-pills-container"></div>
+        <div class="flex flex-col sm:flex-row gap-3 pt-2">
+          <div class="relative flex-1">
+            <span class="material-symbols-outlined absolute left-3 top-2.5 text-text-muted text-[20px]">search</span>
+            <input id="cari-hadits-input" oninput="renderHaditsList()" type="text" placeholder="Cari kata kunci terjemahan hadits..." class="w-full pl-10 pr-4 py-2 rounded-xl bg-surface-container gold-border text-sm text-text-primary focus:outline-none focus:border-primary"/>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="gantiHalamanHadits(-1)" class="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-semibold gold-border">← Sebelumnya</button>
+            <span id="page-indicator-hadits" class="text-xs text-text-muted px-2">Hal 1</span>
+            <button onclick="gantiHalamanHadits(1)" class="px-4 py-2 rounded-xl bg-primary-container text-on-primary-container hover:bg-primary text-xs font-semibold">Berikutnya →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-8 space-y-4" id="hadits-list-container"></div>
+        <div class="lg:col-span-4 space-y-5">
+          <div class="rounded-2xl bg-surface p-6 gold-border space-y-4">
+            <div class="flex items-center gap-2 text-primary">
+              <span class="material-symbols-outlined text-[20px]">school</span>
+              <h3 class="font-serif text-lg font-bold">Kamus Musthalah Hadits</h3>
+            </div>
+            <div class="space-y-3 text-xs">
+              <div class="p-3 rounded-xl bg-surface-container gold-border">
+                <strong class="text-primary block mb-0.5">Sanad</strong>
+                <span class="text-text-muted">Silsilah mata rantai perawi yang menghubungkan teks hadits sampai kepada Rasulullah ﷺ.</span>
+              </div>
+              <div class="p-3 rounded-xl bg-surface-container gold-border">
+                <strong class="text-primary block mb-0.5">Matan</strong>
+                <span class="text-text-muted">Inti perkataan atau isi kandungan sabda Rasulullah ﷺ di penghujung sanad.</span>
+              </div>
+              <div class="p-3 rounded-xl bg-surface-container gold-border">
+                <strong class="text-accent-emerald block mb-0.5">Shahih & Hasan</strong>
+                <span class="text-text-muted">Hadits dengan sanad bersambung, diriwayatkan oleh perawi adil serta kuat hafalannya.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 4. HALAMAN JURNAL & RISALAH ==================== -->
+    <div id="page-jurnal" class="page-section hidden space-y-8">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div class="space-y-2">
+          <span class="inline-block px-3 py-1 rounded-full bg-surface text-accent-emerald text-[10px] font-semibold uppercase tracking-widest gold-border">● Pustaka Ilmiah Terakreditasi • DKM Al Muhajirin</span>
+          <h1 class="font-serif text-3xl sm:text-4xl font-bold text-text-primary">Jurnal & Risalah Ilmiah Dakwah</h1>
+          <p class="text-sm text-text-muted max-w-2xl">Koleksi publikasi karya tulis ilmiah, telaah fikih kontemporer, dan arsip buletin mingguan yang diterbitkan oleh Dewan Syariah Masjid Al Muhajirin.</p>
+        </div>
+        <button onclick="bukaModalArsip('jurnal')" class="admin-only inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary-container text-on-primary-container font-semibold text-sm hover:bg-primary transition shrink-0">
+          <span class="material-symbols-outlined text-[20px]">add</span>
+          <span>Tambah Jurnal / Tulisan</span>
+        </button>
+      </div>
+
+      <div class="rounded-2xl bg-surface p-4 gold-border">
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-2.5 text-text-muted text-[20px]">search</span>
+          <input id="cari-jurnal-input" oninput="renderArsip('jurnal')" type="text" placeholder="Cari judul risalah, nama ustadz, atau topik bahasan..." class="w-full pl-10 pr-4 py-2 rounded-xl bg-surface-container gold-border text-sm text-text-primary focus:outline-none focus:border-primary"/>
+        </div>
+      </div>
+
+      <div id="jurnal-list-container" class="space-y-4"></div>
+    </div>
+
+    <!-- ==================== 5. HALAMAN NASKAH KHUTBAH ==================== -->
+    <div id="page-khutbah" class="page-section hidden space-y-8">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div class="space-y-2">
+          <span class="inline-block px-3 py-1 rounded-full bg-surface text-primary text-[10px] font-semibold uppercase tracking-widest gold-border">● Mimbar Jumat & Hari Raya</span>
+          <h1 class="font-serif text-3xl sm:text-4xl font-bold text-text-primary">Arsip Naskah Khutbah</h1>
+          <p class="text-sm text-text-muted max-w-2xl">Kumpulan transkrip naskah khutbah Jumat dan hari raya lengkap dengan dalil rujukan untuk bahan muhasabah jamaah.</p>
+        </div>
+        <button onclick="bukaModalArsip('khutbah')" class="admin-only inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary-container text-on-primary-container font-semibold text-sm hover:bg-primary transition shrink-0">
+          <span class="material-symbols-outlined text-[20px]">add</span>
+          <span>Tambah Naskah Khutbah</span>
+        </button>
+      </div>
+
+      <div class="rounded-2xl bg-surface p-4 gold-border">
+        <div class="relative">
+          <span class="material-symbols-outlined absolute left-3 top-2.5 text-text-muted text-[20px]">search</span>
+          <input id="cari-khutbah-input" oninput="renderArsip('khutbah')" type="text" placeholder="Cari judul khutbah atau nama khatib..." class="w-full pl-10 pr-4 py-2 rounded-xl bg-surface-container gold-border text-sm text-text-primary focus:outline-none focus:border-primary"/>
+        </div>
+      </div>
+
+      <div id="khutbah-list-container" class="space-y-4"></div>
+    </div>
+
+    <!-- ==================== 6. HALAMAN JADWAL PETUGAS ==================== -->
+    <div id="page-jadwal" class="page-section hidden space-y-8">
+      <div class="rounded-2xl bg-surface p-6 sm:p-8 gold-border">
+        <span class="text-[11px] font-semibold text-primary uppercase tracking-widest">▎Sistem Administrasi Dakwah</span>
+        <h1 class="font-serif text-2xl sm:text-3xl font-bold text-text-primary mt-1">Jadwal Khutbah & Petugas Imam Rawatib</h1>
+        <p class="text-xs sm:text-sm text-text-muted mt-1">Manajemen dan publikasi jadwal penugasan khatib Jum'at, imam rawatib, serta penceramah kajian rutin.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-8 space-y-6">
+          <div class="rounded-2xl bg-surface p-6 sm:p-8 gold-border space-y-6" id="sorotan-jadwal-box"></div>
+
+          <div class="rounded-2xl bg-surface p-6 gold-border space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 class="font-serif text-xl font-bold text-text-primary">Daftar Agenda Penugasan</h3>
+                <p class="text-xs text-text-muted">Ringkasan penugasan imam rawatib, khutbah, dan majelis taklim</p>
+              </div>
+              <span class="text-[11px] text-accent-emerald font-semibold">● Sinkronisasi Cloudflare D1</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <select id="filter-jadwal-kegiatan" onchange="renderJadwal()" class="px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-xs text-text-primary">
+                <option value="">Semua Jenis Kegiatan</option>
+                <option value="Khutbah Jum'at">Khutbah Jum'at</option>
+                <option value="Imam Rawatib">Imam Rawatib</option>
+                <option value="Kajian Rutin">Kajian Rutin</option>
+              </select>
+              <select id="filter-jadwal-status" onchange="renderJadwal()" class="px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-xs text-text-primary">
+                <option value="">Semua Status</option>
+                <option value="Terjadwal">Terjadwal</option>
+                <option value="Selesai">Selesai</option>
+                <option value="Batal">Batal</option>
+              </select>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-collapse">
+                <thead>
+                  <tr class="border-b border-border-gold text-[11px] text-text-muted uppercase tracking-wider">
+                    <th class="py-3 px-3">Tanggal</th>
+                    <th class="py-3 px-3">Kegiatan</th>
+                    <th class="py-3 px-3">Petugas & Tema</th>
+                    <th class="py-3 px-3">Status</th>
+                    <th class="py-3 px-3 admin-only text-right">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="tabel-jadwal-body" class="divide-y divide-border-gold text-sm"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 space-y-6">
+          <div class="rounded-2xl bg-surface p-6 gold-border space-y-4 admin-only">
+            <h3 class="font-serif text-xl font-bold text-text-primary">Tambah / Ubah Jadwal</h3>
+            <input type="hidden" id="jadwal-id"/>
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block text-text-muted mb-1 font-semibold">Tanggal Kegiatan</label>
+                <input type="date" id="jadwal-tanggal" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+              </div>
+              <div>
+                <label class="block text-text-muted mb-1 font-semibold">Jenis Kegiatan</label>
+                <select id="jadwal-kegiatan" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary">
+                  <option value="Khutbah Jum'at">Khutbah Jum'at</option>
+                  <option value="Imam Rawatib">Imam Rawatib</option>
+                  <option value="Kajian Rutin">Kajian Rutin</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-text-muted mb-1 font-semibold">Nama Ustadz / Petugas</label>
+                <input type="text" id="jadwal-petugas" placeholder="Contoh: Ustadz Dr. Muhammad Ridwan" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+              </div>
+              <div>
+                <label class="block text-text-muted mb-1 font-semibold">Tema / Keterangan</label>
+                <input type="text" id="jadwal-tema" placeholder="Contoh: Menjaga Keikhlasan Beramal" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+              </div>
+              <div>
+                <label class="block text-text-muted mb-1 font-semibold">Status Penugasan</label>
+                <select id="jadwal-status" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary">
+                  <option value="Terjadwal">Terjadwal</option>
+                  <option value="Selesai">Selesai</option>
+                  <option value="Batal">Batal</option>
+                </select>
+              </div>
+              <div class="pt-2 flex gap-2">
+                <button onclick="simpanJadwal()" class="flex-1 py-2.5 px-4 rounded-xl bg-primary-container text-on-primary-container font-bold hover:bg-primary transition">Simpan</button>
+                <button onclick="resetFormJadwal()" class="py-2.5 px-4 rounded-xl bg-surface-container text-text-muted gold-border">Reset</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 7. HALAMAN PROGRAM QURBAN ==================== -->
+    <div id="page-qurban" class="page-section hidden space-y-8">
+      <div class="space-y-2">
+        <span class="inline-block px-3 py-1 rounded-full bg-surface text-accent-emerald text-[10px] font-semibold uppercase tracking-widest gold-border">● Program Terpadu • Idul Adha</span>
+        <h1 class="font-serif text-3xl sm:text-4xl font-bold text-text-primary">Program Tabungan & Manajemen Qurban</h1>
+        <p class="text-sm text-text-muted max-w-2xl">Layanan perencanaan dan kemudahan bagi jamaah dalam menunaikan ibadah qurban melalui setoran berkala, transparan, dan amanah.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="rounded-2xl bg-surface p-5 gold-border">
+          <span class="text-xs text-text-muted uppercase block mb-2">Total Dana Terkumpul</span>
+          <div class="font-serif text-2xl font-bold text-text-primary" id="qurban-metric-dana">Rp 0</div>
+          <span class="text-[11px] text-accent-emerald mt-1 block">● Amanah Tabungan Jamaah</span>
+        </div>
+        <div class="rounded-2xl bg-surface p-5 gold-border">
+          <span class="text-xs text-text-muted uppercase block mb-2">Jamaah Terdaftar</span>
+          <div class="font-serif text-2xl font-bold text-text-primary" id="qurban-metric-peserta">0 Mudhohi</div>
+          <span class="text-[11px] text-text-muted mt-1 block" id="qurban-metric-lunas">0 Lunas</span>
+        </div>
+        <div class="rounded-2xl bg-surface p-5 gold-border">
+          <span class="text-xs text-text-muted uppercase block mb-2">Paket Sapi Kolektif (1/7)</span>
+          <div class="font-serif text-2xl font-bold text-primary" id="qurban-harga-sapi17-display">Rp 3.250.000</div>
+          <span class="text-[11px] text-text-muted mt-1 block">Patungan 7 Orang / Ekor</span>
+        </div>
+        <div class="rounded-2xl bg-surface p-5 gold-border">
+          <span class="text-xs text-text-muted uppercase block mb-2">Paket Kambing Standar</span>
+          <div class="font-serif text-2xl font-bold text-primary" id="qurban-harga-kambing-display">Rp 2.900.000</div>
+          <span class="text-[11px] text-text-muted mt-1 block">Individu • Sesuai Syariat</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-8 rounded-2xl bg-surface p-6 gold-border space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h3 class="font-serif text-xl font-bold text-text-primary">Daftar Tabungan Mudhohi</h3>
+            <input id="cari-qurban-input" oninput="renderQurban()" type="text" placeholder="Cari nama mudhohi..." class="px-3 py-1.5 rounded-xl bg-surface-container gold-border text-xs text-text-primary"/>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-border-gold text-[11px] text-text-muted uppercase">
+                  <th class="py-3 px-3">Mudhohi / Keluarga</th>
+                  <th class="py-3 px-3">Paket Qurban</th>
+                  <th class="py-3 px-3">Target Biaya</th>
+                  <th class="py-3 px-3">Terkumpul</th>
+                  <th class="py-3 px-3">Status</th>
+                  <th class="py-3 px-3 admin-only text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tabel-qurban-body" class="divide-y divide-border-gold text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 space-y-6">
+          <div class="rounded-2xl bg-surface p-6 gold-border space-y-4">
+            <h3 class="font-serif text-lg font-bold text-text-primary">Kalkulator Simulasi Qurban</h3>
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block text-text-muted mb-1">Pilihan Hewan Qurban</label>
+                <select id="sim-hewan" onchange="hitungSimulasiQurban()" class="w-full px-3 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary">
+                  <option value="Sapi (1/7)">Sapi Kolektif (1/7)</option>
+                  <option value="Kambing">Kambing Standar</option>
+                  <option value="Sapi Utuh">Sapi Utuh</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-text-muted mb-1">Jangka Waktu Angsuran (Bulan)</label>
+                <select id="sim-bulan" onchange="hitungSimulasiQurban()" class="w-full px-3 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary">
+                  <option value="3">3 Bulan</option>
+                  <option value="6" selected>6 Bulan</option>
+                  <option value="10">10 Bulan</option>
+                </select>
+              </div>
+              <div class="p-4 rounded-xl bg-surface-container gold-border flex items-center justify-between">
+                <span class="text-text-muted">Estimasi Setoran / Bulan:</span>
+                <strong class="font-serif text-lg text-primary" id="sim-hasil">Rp 541.667</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-surface p-6 gold-border space-y-4 admin-only">
+            <h3 class="font-serif text-lg font-bold text-text-primary">Input / Update Mudhohi</h3>
+            <input type="hidden" id="qurban-id"/>
+            <div class="space-y-3 text-xs">
+              <div>
+                <label class="block text-text-muted mb-1">Nama Jamaah / Mudhohi</label>
+                <input type="text" id="qurban-nama" placeholder="Contoh: H. Bambang Soeprapto" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+              </div>
+              <div>
+                <label class="block text-text-muted mb-1">Target Hewan Qurban</label>
+                <select id="qurban-hewan" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary">
+                  <option value="Sapi (1/7)">Sapi (1/7)</option>
+                  <option value="Kambing">Kambing</option>
+                  <option value="Sapi Utuh">Sapi Utuh</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-text-muted mb-1">Total Dana Terkumpul (Rp)</label>
+                <input type="number" id="qurban-terkumpul" placeholder="Contoh: 3250000" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+              </div>
+              <div class="pt-2 flex gap-2">
+                <button onclick="simpanQurban()" class="flex-1 py-2.5 px-4 rounded-xl bg-primary-container text-on-primary-container font-bold hover:bg-primary transition">Simpan Tabungan</button>
+                <button onclick="resetFormQurban()" class="py-2.5 px-4 rounded-xl bg-surface-container text-text-muted gold-border">Reset</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 8. HALAMAN KAS MASJID (Publik Ringkasan, Admin Rincian) ==================== -->
+    <div id="page-kas" class="page-section hidden space-y-8">
+      <div class="space-y-2">
+        <span class="inline-block px-3 py-1 rounded-full bg-surface text-accent-emerald text-[10px] font-semibold uppercase tracking-widest gold-border">● Transparansi Dana Umat</span>
+        <h1 class="font-serif text-3xl sm:text-4xl font-bold text-text-primary">Laporan Keuangan Kas Masjid</h1>
+        <p class="text-sm text-text-muted max-w-2xl">Ringkasan total pemasukan, pengeluaran, dan saldo akhir kas masjid untuk jamaah. Rincian mutasi transaksi dikelola secara internal oleh pengurus DKM.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="rounded-2xl bg-surface p-7 gold-border">
+          <span class="text-xs font-semibold text-text-muted uppercase tracking-wider block mb-2">Total Pemasukan</span>
+          <div class="font-serif text-3xl font-bold text-accent-emerald" id="kas-card-masuk">Rp 0</div>
+          <p class="text-xs text-text-muted mt-2">Akumulasi infaq, sedekah, dan donasi jamaah</p>
+        </div>
+        <div class="rounded-2xl bg-surface p-7 gold-border">
+          <span class="text-xs font-semibold text-text-muted uppercase tracking-wider block mb-2">Total Pengeluaran</span>
+          <div class="font-serif text-3xl font-bold text-primary" id="kas-card-keluar">Rp 0</div>
+          <p class="text-xs text-text-muted mt-2">Operasional ibadah, pemeliharaan, dan dakwah</p>
+        </div>
+        <div class="rounded-2xl bg-surface-container-high p-7 gold-border-strong shadow-lg">
+          <span class="text-xs font-semibold text-primary uppercase tracking-wider block mb-2">Sisa Saldo Kas Saat Ini</span>
+          <div class="font-serif text-3xl font-bold text-text-primary" id="kas-card-saldo">Rp 0</div>
+          <p class="text-xs text-accent-emerald mt-2 font-semibold">● Dana Tersedia di Kas DKM</p>
+        </div>
+      </div>
+
+      <div id="kas-publik-notice" class="rounded-2xl bg-surface p-6 gold-border flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-primary text-2xl">lock</span>
+          <div>
+            <h4 class="font-semibold text-sm text-text-primary">Rincian Transaksi Khusus Internal Pengurus DKM</h4>
+            <p class="text-xs text-text-muted">Tabel rincian mutasi transaksi hanya ditampilkan bagi pengurus DKM yang telah login.</p>
+          </div>
+        </div>
+        <button onclick="navigasi('login')" class="px-4 py-2 rounded-xl bg-surface-container hover:bg-surface-container-high text-primary text-xs font-semibold gold-border shrink-0">Login Pengurus</button>
+      </div>
+
+      <div class="admin-only grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="lg:col-span-8 rounded-2xl bg-surface p-6 gold-border space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h3 class="font-serif text-xl font-bold text-text-primary">Rincian Mutasi Kas (Khusus Admin)</h3>
+            <input id="cari-kas-input" oninput="renderKas()" type="text" placeholder="Cari keterangan / kategori..." class="px-3 py-1.5 rounded-xl bg-surface-container gold-border text-xs text-text-primary"/>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="border-b border-border-gold text-[11px] text-text-muted uppercase">
+                  <th class="py-3 px-3">Tanggal</th>
+                  <th class="py-3 px-3">Jenis</th>
+                  <th class="py-3 px-3">Kategori</th>
+                  <th class="py-3 px-3">Keterangan</th>
+                  <th class="py-3 px-3 text-right">Nominal</th>
+                  <th class="py-3 px-3 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="tabel-kas-body" class="divide-y divide-border-gold text-sm"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="lg:col-span-4 rounded-2xl bg-surface p-6 gold-border space-y-4">
+          <h3 class="font-serif text-lg font-bold text-text-primary">Catat Transaksi Kas</h3>
+          <input type="hidden" id="kas-id"/>
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-text-muted mb-1">Tanggal Transaksi</label>
+              <input type="date" id="kas-tanggal" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+            </div>
+            <div>
+              <label class="block text-text-muted mb-1">Jenis Transaksi</label>
+              <select id="kas-jenis" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary">
+                <option value="Pemasukan">Pemasukan</option>
+                <option value="Pengeluaran">Pengeluaran</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-text-muted mb-1">Kategori</label>
+              <input type="text" id="kas-kategori" placeholder="Contoh: Infak Jumat / Listrik" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+            </div>
+            <div>
+              <label class="block text-text-muted mb-1">Keterangan Rinci</label>
+              <input type="text" id="kas-keterangan" placeholder="Contoh: Kotak amal shalat Jumat" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+            </div>
+            <div>
+              <label class="block text-text-muted mb-1">Nominal (Rp)</label>
+              <input type="number" id="kas-nominal" placeholder="Contoh: 2500000" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+            </div>
+            <div class="pt-2 flex gap-2">
+              <button onclick="simpanKas()" class="flex-1 py-2.5 px-4 rounded-xl bg-primary-container text-on-primary-container font-bold hover:bg-primary transition">Simpan Transaksi</button>
+              <button onclick="resetFormKas()" class="py-2.5 px-4 rounded-xl bg-surface-container text-text-muted gold-border">Reset</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 9. HALAMAN ASISTEN AI ==================== -->
+    <div id="page-ai" class="page-section hidden space-y-6">
+      <div class="space-y-2">
+        <span class="inline-block px-3 py-1 rounded-full bg-surface text-accent-emerald text-[10px] font-semibold uppercase tracking-widest gold-border">● Asisten Cerdas Pengurus DKM</span>
+        <h1 class="font-serif text-3xl font-bold text-text-primary">Asisten AI Penyusun Materi & Administrasi</h1>
+      </div>
+      <div class="rounded-2xl bg-surface p-6 gold-border space-y-4">
+        <label class="block text-xs font-semibold text-text-muted">Kunci API Google Gemini (Disimpan di peramban ini)</label>
+        <div class="flex gap-2">
+          <input type="password" id="gemini-api-key" placeholder="Masukkan Gemini API Key (AIzaSy...)" class="flex-1 px-4 py-2.5 rounded-xl bg-surface-container gold-border text-sm text-text-primary"/>
+          <button onclick="simpanKeyGemini()" class="px-5 py-2.5 rounded-xl bg-primary-container text-on-primary-container font-semibold text-xs hover:bg-primary transition">Simpan Kunci</button>
+        </div>
+      </div>
+      <div class="rounded-2xl bg-surface p-6 gold-border space-y-4">
+        <div id="ai-chat-box" class="space-y-3 min-h-[260px] max-h-[420px] overflow-y-auto p-4 rounded-xl bg-surface-container gold-border text-sm">
+          <div class="text-text-muted text-center py-10">Tanyakan ide khutbah, risalah kajian, atau surat pengumuman masjid...</div>
+        </div>
+        <div class="flex gap-3">
+          <textarea id="ai-prompt-input" rows="2" placeholder="Tulis instruksi kepada Asisten AI..." class="flex-1 p-3.5 rounded-xl bg-surface-container gold-border text-sm text-text-primary"></textarea>
+          <button onclick="kirimPesanAI()" class="px-6 rounded-xl bg-primary-container text-on-primary-container font-bold text-sm hover:bg-primary transition">Kirim</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 10. HALAMAN PENGATURAN ==================== -->
+    <div id="page-pengaturan" class="page-section hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="font-serif text-3xl font-bold text-text-primary">Pengaturan Konfigurasi Masjid</h1>
+          <p class="text-sm text-text-muted">Sesuaikan informasi kontak, lokasi jadwal sholat, dan standar harga qurban.</p>
+        </div>
+        <button onclick="simpanPengaturanWeb()" class="px-6 py-3 rounded-xl bg-primary-container text-on-primary-container font-bold text-sm hover:bg-primary transition">Simpan Pengaturan</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="rounded-2xl bg-surface p-6 gold-border space-y-4">
+          <h3 class="font-serif text-lg font-bold text-primary">Profil & Lokasi Masjid</h3>
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-text-muted mb-1">Nama Masjid</label>
+              <input type="text" id="set-nama-masjid" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+            </div>
+            <div>
+              <label class="block text-text-muted mb-1">Kota Jadwal Sholat (API Aladhan)</label>
+              <input type="text" id="set-kota-sholat" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+            </div>
+            <div>
+              <label class="block text-text-muted mb-1">Nomor WhatsApp Sekretariat</label>
+              <input type="text" id="set-wa" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+            </div>
+            <div>
+              <label class="block text-text-muted mb-1">Alamat Lengkap</label>
+              <textarea id="set-alamat" rows="2" class="w-full p-3 rounded-xl bg-surface-container gold-border text-text-primary"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-2xl bg-surface p-6 gold-border space-y-4">
+          <h3 class="font-serif text-lg font-bold text-primary">Standar Harga Target Qurban (Rp)</h3>
+          <div class="space-y-3 text-xs">
+            <div>
+              <label class="block text-text-muted mb-1">Harga Sapi Kolektif (1/7)</label>
+              <input type="number" id="set-harga-sapi17" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+            </div>
+            <div>
+              <label class="block text-text-muted mb-1">Harga Kambing Standar</label>
+              <input type="number" id="set-harga-kambing" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+            </div>
+            <div>
+              <label class="block text-text-muted mb-1">Harga Sapi Utuh</label>
+              <input type="number" id="set-harga-sapiutuh" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-text-primary"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 11. HALAMAN LOGIN PENGURUS ==================== -->
+    <div id="page-login" class="page-section hidden py-10">
+      <div class="max-w-md mx-auto rounded-2xl bg-surface p-8 gold-border shadow-2xl space-y-6">
+        <div class="text-center space-y-2">
+          <div class="w-12 h-12 rounded-2xl bg-surface-container-high gold-border mx-auto flex items-center justify-center text-primary">
+            <span class="material-symbols-outlined text-3xl">admin_panel_settings</span>
+          </div>
+          <h2 class="font-serif text-2xl font-bold text-text-primary">Login Pengelola DKM</h2>
+          <p class="text-xs text-text-muted">Masuk menggunakan akun Admin atau Petugas yang terdaftar di Cloudflare D1.</p>
+        </div>
+
+        <div class="space-y-4 text-xs">
+          <div>
+            <label class="block text-text-muted mb-1 font-semibold">Email / Username Pengurus</label>
+            <input type="text" id="login-identifier" placeholder="admin@almuhajirin.id" class="w-full px-4 py-3 rounded-xl bg-surface-container gold-border text-sm text-text-primary focus:outline-none focus:border-primary"/>
+          </div>
+          <div>
+            <label class="block text-text-muted mb-1 font-semibold">Kata Sandi</label>
+            <input type="password" id="login-password" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl bg-surface-container gold-border text-sm text-text-primary focus:outline-none focus:border-primary"/>
+          </div>
+          <button onclick="handleLoginSubmit()" class="w-full py-3.5 rounded-xl bg-primary-container text-on-primary-container font-bold text-sm hover:bg-primary transition shadow-lg">
+            Masuk ke Dashboard DKM
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL BACA / TAMBAH ARSIP JURNAL & KHUTBAH -->
+  <div id="modal-arsip" class="fixed inset-0 z-[70] hidden bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl rounded-2xl bg-surface gold-border p-6 sm:p-8 max-h-[90vh] overflow-y-auto space-y-5">
+      <div class="flex items-center justify-between border-b border-border-gold pb-4">
+        <h3 class="font-serif text-xl font-bold text-primary" id="modal-arsip-title">Tambah Tulisan</h3>
+        <button onclick="tutupModalArsip()" class="text-text-muted hover:text-primary"><span class="material-symbols-outlined">close</span></button>
+      </div>
+      <div id="modal-arsip-form" class="space-y-4 text-xs">
+        <input type="hidden" id="arsip-jenis"/>
+        <input type="hidden" id="arsip-id"/>
+        <div>
+          <label class="block text-text-muted mb-1 font-semibold">Judul Naskah / Risalah</label>
+          <input type="text" id="arsip-judul" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-sm text-text-primary"/>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-text-muted mb-1 font-semibold">Penulis / Khatib</label>
+            <input type="text" id="arsip-penulis" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-sm text-text-primary"/>
+          </div>
+          <div>
+            <label class="block text-text-muted mb-1 font-semibold">Tanggal Publikasi</label>
+            <input type="date" id="arsip-tanggal" class="w-full px-3.5 py-2.5 rounded-xl bg-surface-container gold-border text-sm text-text-primary"/>
+          </div>
+        </div>
+        <div>
+          <label class="block text-text-muted mb-1 font-semibold">Isi Lengkap Naskah</label>
+          <textarea id="arsip-isi" rows="8" class="w-full p-3.5 rounded-xl bg-surface-container gold-border text-sm text-text-primary leading-relaxed"></textarea>
+        </div>
+        <div class="flex justify-end gap-3 pt-2">
+          <button onclick="tutupModalArsip()" class="px-4 py-2.5 rounded-xl bg-surface-container text-text-muted gold-border">Batal</button>
+          <button onclick="simpanArsipData()" class="px-6 py-2.5 rounded-xl bg-primary-container text-on-primary-container font-bold">Simpan Naskah</button>
+        </div>
+      </div>
+      <div id="modal-arsip-baca" class="hidden space-y-4">
+        <p class="text-xs text-accent-emerald font-semibold" id="baca-arsip-meta"></p>
+        <div id="baca-arsip-isi" class="text-sm text-text-primary whitespace-pre-wrap leading-relaxed"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE BOTTOM NAVIGATION BAR -->
+  <nav class="xl:hidden fixed bottom-0 left-0 right-0 z-50 glass-header border-t border-border-gold flex items-center justify-around h-16 px-2">
+    <button onclick="navigasi('beranda')" data-nav="beranda" class="nav-link flex flex-col items-center justify-center text-primary text-[11px] font-semibold">
+      <span class="material-symbols-outlined text-[20px]">home</span>
+      <span>Beranda</span>
+    </button>
+    <button onclick="navigasi('quran')" data-nav="quran" class="nav-link flex flex-col items-center justify-center text-text-muted text-[11px]">
+      <span class="material-symbols-outlined text-[20px]">menu_book</span>
+      <span>Al-Qur'an</span>
+    </button>
+    <button onclick="navigasi('jadwal')" data-nav="jadwal" class="nav-link flex flex-col items-center justify-center text-text-muted text-[11px]">
+      <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+      <span>Jadwal</span>
+    </button>
+    <button onclick="navigasi('qurban')" data-nav="qurban" class="nav-link flex flex-col items-center justify-center text-text-muted text-[11px]">
+      <span class="material-symbols-outlined text-[20px]">savings</span>
+      <span>Qurban</span>
+    </button>
+    <button onclick="navigasi('kas')" data-nav="kas" class="nav-link flex flex-col items-center justify-center text-text-muted text-[11px]">
+      <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+      <span>Kas</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+// ============================================================================
+// 1. KONFIGURASI CLOUDFLARE WORKER & SAKLAR PREVIEW
+// ============================================================================
+const IS_PREVIEW = true; // Ubah menjadi false SAAT DEPLOY agar terhubung 100% ke Cloudflare D1
+const WORKER_URL = "https://masjid-api.nama-akun-anda.workers.dev"; // Ganti dengan URL Cloudflare Worker Anda
+
+if (!IS_PREVIEW) {
+  const banner = document.getElementById('preview-banner');
+  if (banner) banner.remove();
+}
+
+let authToken = sessionStorage.getItem('cf_dkm_token') || '';
+let currentUser = null;
+
+// ============================================================================
+// 2. STATE APLIKASI & DATA DUMMY MINIMALIS (SAAT IS_PREVIEW = true)
+// ============================================================================
+let state = {
+  pengaturan: {
+    NamaMasjid: "Masjid Al Muhajirin",
+    KotaJadwal: "Jakarta",
+    NomorWhatsApp: "0812-3456-7890",
+    Alamat: "Jl. Melati Raya No. 45, Kompleks Graha Indah, Jakarta Timur",
+    HargaSapi17: 3250000,
+    HargaKambing: 2900000,
+    HargaSapiUtuh: 22750000
+  },
+  jurnal: IS_PREVIEW ? [
+    { id: 1, judul: 'Fiqih Wakaf Produktif & Tata Kelola Keuangan Masjid Berbasis Amanah', penulis: 'Ustadz Dr. Muhammad Ridwan, M.A.', tanggal_publikasi: '2026-11-10', isi: 'Wakaf produktif mengubah aset masjid menjadi sumber manfaat berkelanjutan bagi umat.\n\nTata kelola yang transparan menjaga amanah jamaah.' }
+  ] : [],
+  khutbah: IS_PREVIEW ? [
+    { id: 1, judul: 'Menjaga Keikhlasan dalam Beramal dan Beribadah', khatib: 'Ustadz Dr. Muhammad Ridwan, M.A.', tanggal_disampaikan: '2026-11-13', isi: 'Segala puji bagi Allah Rabb semesta alam. Ikhlas adalah ruh dari setiap amal ibadah kita.' }
+  ] : [],
+  jadwal: IS_PREVIEW ? [
+    { id: 1, tanggal: '2026-11-20', kegiatan: "Khutbah Jum'at", petugas: 'Ustadz Dr. Muhammad Ridwan, M.A.', tema: 'Menjaga Keikhlasan dalam Beramal', status: 'Terjadwal' }
+  ] : [],
+  qurban: IS_PREVIEW ? [
+    { id: 1, nama_jamaah: 'H. Bambang Soeprapto', target_hewan: 'Sapi (1/7)', total_terkumpul: 3250000 }
+  ] : [],
+  kasRingkasan: { pemasukan: 14850000, pengeluaran: 2450000, saldo: 12400000 },
+  kas: IS_PREVIEW ? [
+    { id: 1, tanggal: '2026-11-13', jenis: 'Pemasukan', kategori: 'Infak Jumat', keterangan: 'Kotak amal shalat Jumat pekan berjalan', nominal: 14850000 },
+    { id: 2, tanggal: '2026-11-15', jenis: 'Pengeluaran', kategori: 'Operasional', keterangan: 'Tagihan listrik dan perawatan ruang utama', nominal: 2450000 }
+  ] : []
+};
+
+const SLIDES_DATA = [
+  { badge: 'Kajian Rutin Pekanan', judul: "Kajian Fiqih Kontemporer Ba'da Maghrib", desk: 'Membahas fiqih muamalah dan ibadah harian bersama asatidz terpercaya di ruang utama masjid.', img: 'https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=1200&q=80' },
+  { badge: "Pendidikan Al-Qur'an", judul: "Program Tahsin & Tahfidz Al-Qur'an Dewasa", desk: 'Bimbingan bacaan tartil bersanad dan setoran hafalan Juz 30 setiap akhir pekan.', img: 'https://images.unsplash.com/photo-1609599006353-e629aaabfeae?auto=format&fit=crop&w=1200&q=80' },
+  { badge: 'Amanah Sosial Jamaah', judul: 'Santunan Rutin Yatim & Dhuafa Bulanan', desk: 'Penyaluran amanah donasi jamaah untuk puluhan mustahik di lingkungan sekitar masjid.', img: 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?auto=format&fit=crop&w=1200&q=80' },
+  { badge: 'Semarak Ibadah', judul: 'Pemeliharaan Kenyamanan Ruang Utama Shalat', desk: 'Pembersihan karpet rutin dan penataan fasilitas wudhu demi kekhusyukan ibadah jamaah.', img: 'https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1200&q=80' },
+  { badge: 'Sosial & Qurban', judul: 'Penerimaan & Pengelolaan Tabungan Qurban', desk: 'Pendaftaran peserta tabungan qurban sapi dan kambing secara bertahap dan transparan.', img: 'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?auto=format&fit=crop&w=1200&q=80' }
+];
+
+const TAUSIYAH_LIST = [
+  { quote: "Barangsiapa yang membangun masjid karena Allah, niscaya Allah akan membangunkan untuknya rumah di surga.", source: "HR. Bukhari & Muslim" },
+  { quote: "Sebaik-baik manusia di antara kalian adalah yang paling banyak memberikan manfaat bagi sesama.", source: "HR. Ahmad & Thabrani" },
+  { quote: "Shalat berjamaah lebih utama dua puluh tujuh derajat dibandingkan shalat sendirian.", source: "HR. Bukhari & Muslim" }
+];
+
+const rp = n => 'Rp ' + Number(n || 0).toLocaleString('id-ID');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&','<':'<','>':'>','"':'"',"'":'''}[c]));
+
+// ============================================================================
+// 3. FUNGSI KOMUNIKASI API CLOUDFLARE WORKER
+// ============================================================================
+async function apiFetch(endpoint, options = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
+  if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+  const res = await fetch(`${WORKER_URL.replace(/\/$/, '')}${endpoint}`, { ...options, headers });
+  const json = await res.json();
+  if (!res.ok || !json.ok) throw new Error(json.message || 'Gagal menghubungi Cloudflare Worker');
+  return json;
+}
+
+async function muatSemuaDataCloudflare() {
+  if (IS_PREVIEW) return;
+  try {
+    const res = await apiFetch('/api/init');
+    currentUser = res.user ? { nama: res.user.nama_lengkap, role: res.user.role } : null;
+    state.jurnal = res.jurnal || [];
+    state.khutbah = res.khutbah || [];
+    state.jadwal = res.jadwal || [];
+    state.qurban = res.qurban || [];
+    state.kasRingkasan = res.kasRingkasan || { pemasukan: 0, pengeluaran: 0, saldo: 0 };
+    state.kas = res.kas || [];
+    if (res.pengaturan) Object.assign(state.pengaturan, res.pengaturan);
+    terapkanPengaturanUI();
+    updateAuthUI();
+  } catch (e) {
+    console.error('Error sinkronisasi Cloudflare:', e);
+  }
+}
+
+// ============================================================================
+// 4. NAVIGASI & HAK AKSES UI
+// ============================================================================
+function navigasi(pageId) {
+  document.querySelectorAll('.page-section').forEach(el => el.classList.add('hidden'));
+  const target = document.getElementById('page-' + pageId);
+  if (target) target.classList.remove('hidden');
+
+  document.querySelectorAll('.nav-link').forEach(btn => {
+    const active = btn.getAttribute('data-nav') === pageId;
+    btn.classList.toggle('text-primary', active);
+    btn.classList.toggle('font-semibold', active);
+    if (btn.parentElement.id === 'desktop-nav') {
+      btn.classList.toggle('border-b-2', active);
+      btn.classList.toggle('border-primary-container', active);
+      btn.classList.toggle('pb-1', active);
+    }
+  });
+
+  document.getElementById('app-root').scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (pageId === 'quran' && !daftarSurahCache.length) initQuran();
+  if (pageId === 'hadits' && !daftarKitabCache.length) initHadits();
+  if (pageId === 'jurnal') renderArsip('jurnal');
+  if (pageId === 'khutbah') renderArsip('khutbah');
+  if (pageId === 'jadwal') renderJadwal();
+  if (pageId === 'qurban') { renderQurban(); hitungSimulasiQurban(); }
+  if (pageId === 'kas') renderKas();
+  if (pageId === 'pengaturan') isiFormPengaturan();
+}
+
+function updateAuthUI() {
+  const isAdmin = !!currentUser;
+  document.body.classList.toggle('is-admin', isAdmin);
+  document.getElementById('btn-header-login').classList.toggle('hidden', isAdmin);
+  document.getElementById('btn-header-logout').classList.toggle('hidden', !isAdmin);
+  document.getElementById('btn-header-logout').classList.toggle('inline-flex', isAdmin);
+
+  const badge = document.getElementById('badge-user');
+  if (isAdmin) {
+    badge.textContent = `${currentUser.nama} (${currentUser.role})`;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+
+  const noticeKas = document.getElementById('kas-publik-notice');
+  if (noticeKas) noticeKas.classList.toggle('hidden', isAdmin);
+
+  renderJadwal();
+  renderQurban();
+  renderKas();
+  renderArsip('jurnal');
+  renderArsip('khutbah');
+}
+
+function quickLogin(roleType) {
+  if (!IS_PREVIEW) return;
+  currentUser = roleType === 'admin'
+    ? { nama: 'Ketua DKM (Preview)', role: 'Admin' }
+    : { nama: 'Petugas Ibadah (Preview)', role: 'Petugas' };
+  updateAuthUI();
+  navigasi('beranda');
+}
+
+async function handleLoginSubmit() {
+  const identifier = document.getElementById('login-identifier').value.trim();
+  const password = document.getElementById('login-password').value;
+  if (!identifier || !password) return alert('Harap isi Email/Username dan Kata Sandi.');
+
+  if (IS_PREVIEW) {
+    currentUser = { nama: identifier, role: 'Admin' };
+    updateAuthUI();
+    navigasi('beranda');
+    return;
+  }
+
+  try {
+    const res = await apiFetch('/api/login', {
+      method: 'POST',
+      body: JSON.stringify({ identifier, password })
+    });
+    authToken = res.token;
+    sessionStorage.setItem('cf_dkm_token', authToken);
+    await muatSemuaDataCloudflare();
+    navigasi('beranda');
+  } catch (err) {
+    alert('Gagal Masuk: ' + err.message);
+  }
+}
+
+function handleLogout() {
+  authToken = '';
+  currentUser = null;
+  sessionStorage.removeItem('cf_dkm_token');
+  updateAuthUI();
+  navigasi('beranda');
+}
+
+// ============================================================================
+// 5. BERANDA: JADWAL SHOLAT, CAROUSEL, TAUSIYAH
+// ============================================================================
+let slideIndex = 0;
+function initCarousel() {
+  const container = document.getElementById('carousel-container');
+  const dots = document.getElementById('carousel-dots');
+  container.innerHTML = SLIDES_DATA.map((s, idx) => `
+    <div class="carousel-item absolute inset-0 w-full h-full transition-opacity duration-500 flex flex-col justify-end ${idx === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}">
+      <img src="${s.img}" alt="${esc(s.judul)}" class="absolute inset-0 w-full h-full object-cover"/>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#07130F] via-[#07130F]/75 to-transparent"></div>
+      <div class="relative z-20 p-6 sm:p-10 max-w-3xl">
+        <span class="inline-block px-3 py-1 rounded-full bg-surface-container text-[11px] font-semibold text-primary uppercase tracking-wider mb-3 gold-border">${esc(s.badge)}</span>
+        <h3 class="font-serif text-2xl sm:text-3xl font-bold text-text-primary mb-2">${esc(s.judul)}</h3>
+        <p class="text-sm text-on-surface-variant leading-relaxed">${esc(s.desk)}</p>
+      </div>
+    </div>
+  `).join('');
+
+  dots.innerHTML = SLIDES_DATA.map((_, idx) => `
+    <button onclick="keSlide(${idx})" class="dot-btn h-1.5 rounded-full transition-all duration-300 ${idx === 0 ? 'w-8 bg-primary' : 'w-2.5 bg-surface-container-highest'}"></button>
+  `).join('');
+}
+
+function keSlide(idx) {
+  slideIndex = (idx + SLIDES_DATA.length) % SLIDES_DATA.length;
+  document.querySelectorAll('.carousel-item').forEach((el, i) => {
+    el.className = `carousel-item absolute inset-0 w-full h-full transition-opacity duration-500 flex flex-col justify-end ${i === slideIndex ? 'opacity-100 z-10' : 'opacity-0 z-0'}`;
+  });
+  document.querySelectorAll('.dot-btn').forEach((el, i) => {
+    el.className = `dot-btn h-1.5 rounded-full transition-all duration-300 ${i === slideIndex ? 'w-8 bg-primary' : 'w-2.5 bg-surface-container-highest'}`;
+  });
+  document.getElementById('carousel-counter').textContent = `0${slideIndex + 1} / 0${SLIDES_DATA.length}`;
+}
+function geserCarousel(step) { keSlide(slideIndex + step); }
+
+let tausiyahIdx = 0;
+function acakTausiyah() {
+  tausiyahIdx = (tausiyahIdx + 1) % TAUSIYAH_LIST.length;
+  const item = TAUSIYAH_LIST[tausiyahIdx];
+  document.getElementById('tausiyah-quote').textContent = `“${item.quote}”`;
+  document.getElementById('tausiyah-source').textContent = item.source;
+}
+
+let targetPrayerSeconds = 5400;
+async function muatJadwalSholatAPI() {
+  const kota = state.pengaturan.KotaJadwal || 'Jakarta';
+  const now = new Date();
+  const tglStr = `${String(now.getDate()).padStart(2,'0')}-${String(now.getMonth()+1).padStart(2,'0')}-${now.getFullYear()}`;
+  document.getElementById('label-lokasi-sholat').textContent = `${now.toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' })} • Kawasan ${kota} & Sekitarnya`;
+
+  let timings = { Imsak: '04:22', Fajr: '04:32', Dhuhr: '11:58', Asr: '15:14', Maghrib: '18:02', Isha: '19:12' };
+  try {
+    const res = await fetch(`https://api.aladhan.com/v1/timingsByCity/${tglStr}?city=${encodeURIComponent(kota)}&country=Indonesia&method=20`);
+    const json = await res.json();
+    if (json?.data?.timings) timings = json.data.timings;
+  } catch (e) {}
+
+  const jadwalList = [
+    { label: 'Imsak', waktu: timings.Imsak },
+    { label: 'Subuh', waktu: timings.Fajr },
+    { label: 'Dzuhur', waktu: timings.Dhuhr },
+    { label: 'Ashar', waktu: timings.Asr },
+    { label: 'Maghrib', waktu: timings.Maghrib },
+    { label: 'Isya', waktu: timings.Isha }
+  ];
+
+  const menitSekarang = now.getHours() * 60 + now.getMinutes();
+  let nextIdx = 0;
+  for (let i = 0; i < jadwalList.length; i++) {
+    const [hh, mm] = String(jadwalList[i].waktu).split(':').map(Number);
+    const totalM = hh * 60 + mm;
+    if (totalM > menitSekarang) {
+      nextIdx = i;
+      targetPrayerSeconds = (totalM - menitSekarang) * 60 - now.getSeconds();
+      break;
+    }
+  }
+
+  document.getElementById('next-prayer-name').textContent = `Menuju Shalat ${jadwalList[nextIdx].label}`;
+  document.getElementById('prayer-times-grid').innerHTML = jadwalList.map((item, idx) => {
+    const isNext = idx === nextIdx;
+    return isNext ? `
+      <div class="relative flex flex-col items-center justify-center p-4 rounded-xl bg-surface-container-high shadow-md emerald-border">
+        <span class="absolute -top-2.5 px-2.5 py-0.5 rounded-full bg-surface text-accent-emerald text-[10px] uppercase tracking-wider font-semibold emerald-border">Mendatang</span>
+        <span class="text-xs font-semibold text-accent-emerald uppercase tracking-widest mb-1.5">${item.label}</span>
+        <span class="font-serif text-xl text-primary tabular-nums font-bold">${item.waktu}</span>
+        <span class="text-[11px] text-accent-emerald mt-2">WIB</span>
+      </div>
+    ` : `
+      <div class="flex flex-col items-center justify-center p-4 rounded-xl bg-surface-container gold-border">
+        <span class="text-xs font-semibold text-text-muted uppercase tracking-widest mb-1.5">${item.label}</span>
+        <span class="font-serif text-xl text-text-primary tabular-nums font-bold">${item.waktu}</span>
+        <span class="text-[11px] text-text-muted mt-2">WIB</span>
+      </div>
+    `;
+  }).join('');
+}
+
+setInterval(() => {
+  if (targetPrayerSeconds > 0) targetPrayerSeconds--;
+  const h = String(Math.floor(targetPrayerSeconds / 3600)).padStart(2, '0');
+  const m = String(Math.floor((targetPrayerSeconds % 3600) / 60)).padStart(2, '0');
+  const s = String(targetPrayerSeconds % 60).padStart(2, '0');
+  const el = document.getElementById('countdown-timer');
+  if (el) el.textContent = `${h} : ${m} : ${s}`;
+}, 1000);
+
+// ============================================================================
+// 6. MODUL AL-QUR'AN DIGITAL & AUDIO MUROTTAL PER-SURAH
+// ============================================================================
+let daftarSurahCache = [];
+let surahAktifData = null;
+
+async function initQuran() {
+  try {
+    const res = await fetch('https://equran.id/api/v2/surat');
+    const json = await res.json();
+    daftarSurahCache = json.data || [];
+    renderSidebarSurah(daftarSurahCache);
+    if (daftarSurahCache.length) pilihSurah(18);
+  } catch (e) {
+    document.getElementById('list-surah-sidebar').innerHTML = `<div class="p-4 text-xs text-danger">Gagal memuat daftar surah.</div>`;
+  }
+}
+
+function renderSidebarSurah(list) {
+  const container = document.getElementById('list-surah-sidebar');
+  container.innerHTML = list.map(s => {
+    const active = surahAktifData && surahAktifData.nomor === s.nomor;
+    return `
+      <div onclick="pilihSurah(${s.nomor})" class="cursor-pointer p-3 rounded-xl transition flex items-center justify-between gap-3 ${active ? 'bg-surface-container-high gold-border-strong' : 'bg-surface-container hover:bg-surface-container-high gold-border'}">
+        <div class="flex items-center gap-3 min-w-0">
+          <span class="w-8 h-8 rounded-lg ${active ? 'bg-primary text-on-primary-container' : 'bg-surface text-primary'} flex items-center justify-center text-xs font-bold shrink-0">${s.nomor}</span>
+          <div class="truncate">
+            <div class="text-sm font-bold text-text-primary truncate">${esc(s.namaLatin)}</div>
+            <div class="text-[11px] text-text-muted truncate">${esc(s.arti)} • ${s.jumlahAyat} Ayat</div>
+          </div>
+        </div>
+        <span class="arabic-text text-lg text-primary shrink-0">${esc(s.nama)}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterDaftarSurah() {
+  const q = document.getElementById('cari-surah-input').value.toLowerCase();
+  renderSidebarSurah(daftarSurahCache.filter(s => s.namaLatin.toLowerCase().includes(q) || s.arti.toLowerCase().includes(q) || String(s.nomor) === q));
+}
+
+async function pilihSurah(nomor) {
+  document.getElementById('list-ayat-container').innerHTML = `<div class="p-10 text-center text-sm text-primary rounded-2xl bg-surface gold-border">Memuat ayat dan audio murottal surah ke-${nomor}...</div>`;
+  try {
+    const res = await fetch(`https://equran.id/api/v2/surat/${nomor}`);
+    const json = await res.json();
+    surahAktifData = json.data;
+
+    document.getElementById('quran-active-nomor').textContent = `SURAH KE-${surahAktifData.nomor}`;
+    document.getElementById('quran-active-turun').textContent = `Golongan ${surahAktifData.tempatTurun}`;
+    document.getElementById('quran-active-jumlah').textContent = `${surahAktifData.jumlahAyat} Ayat`;
+    document.getElementById('quran-active-nama').textContent = `Surah ${surahAktifData.namaLatin}`;
+    document.getElementById('quran-active-arab').textContent = surahAktifData.nama;
+    document.getElementById('quran-active-arti').textContent = `"${surahAktifData.arti}"`;
+    document.getElementById('quran-box-arab').textContent = `سورة ${surahAktifData.nama}`;
+    document.getElementById('audio-surah-title').textContent = `Murottal Surah ${surahAktifData.namaLatin}`;
+
+    const audioPlayer = document.getElementById('quran-audio-player');
+    if (surahAktifData.audioFull) {
+      audioPlayer.src = surahAktifData.audioFull['05'] || Object.values(surahAktifData.audioFull)[0];
+    }
+
+    renderSidebarSurah(daftarSurahCache);
+    renderAyatAktif();
+  } catch (e) {
+    document.getElementById('list-ayat-container').innerHTML = `<div class="p-8 text-center text-danger rounded-2xl bg-surface gold-border">Gagal memuat isi surah.</div>`;
+  }
+}
+
+function renderAyatAktif() {
+  if (!surahAktifData) return;
+  const showLatin = document.getElementById('toggle-latin').checked;
+  const showTerjemah = document.getElementById('toggle-terjemah').checked;
+  document.getElementById('status-jumlah-ayat').textContent = `Menampilkan ${surahAktifData.jumlahAyat} Ayat • Surah ${surahAktifData.namaLatin}`;
+
+  document.getElementById('list-ayat-container').innerHTML = (surahAktifData.ayat || []).map(a => `
+    <div class="rounded-2xl bg-surface p-6 sm:p-8 gold-border space-y-5">
+      <div class="flex items-center justify-between border-b border-border-gold pb-3">
+        <div class="flex items-center gap-2">
+          <span class="w-8 h-8 rounded-full bg-primary/20 gold-border text-primary text-xs font-bold flex items-center justify-center">${a.nomorAyat}</span>
+          <span class="text-xs font-semibold text-text-muted">${surahAktifData.namaLatin} : ${a.nomorAyat}</span>
+        </div>
+        ${a.audio && a.audio['05'] ? `
+          <button onclick="putarAudioAyat('${a.audio['05']}')" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary text-xs font-semibold gold-border">
+            <span class="material-symbols-outlined text-[16px]">play_circle</span>
+            <span>Putar Ayat</span>
+          </button>
+        ` : ''}
+      </div>
+      <p class="arabic-text text-2xl sm:text-3xl text-right text-text-primary leading-loose" dir="rtl">${esc(a.teksArab)}</p>
+      ${showLatin ? `<p class="text-xs sm:text-sm text-primary italic leading-relaxed">${esc(a.teksLatin)}</p>` : ''}
+      ${showTerjemah ? `
+        <div class="pt-2 border-t border-border-gold/50">
+          <span class="text-[10px] font-semibold text-text-muted uppercase tracking-wider block mb-1">Terjemahan Kemenag RI</span>
+          <p class="text-sm text-on-surface leading-relaxed">${esc(a.teksIndonesia)}</p>
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+}
+
+function putarAudioAyat(url) {
+  const player = document.getElementById('quran-audio-player');
+  player.src = url;
+  player.play();
+}
+
+// ============================================================================
+// 7. MODUL KOLEKSI HADITS
+// ============================================================================
+let daftarKitabCache = [];
+let kitabAktif = { id: 'bukhari', name: 'HR. Bukhari', page: 1, list: [] };
+
+async function initHadits() {
+  try {
+    const res = await fetch('https://api.hadith.gading.dev/books');
+    const json = await res.json();
+    daftarKitabCache = json.data || [];
+    renderPillsKitab();
+    muatIsiKitab('bukhari', 1);
+  } catch (e) {}
+}
+
+function renderPillsKitab() {
+  const container = document.getElementById('kitab-pills-container');
+  container.innerHTML = daftarKitabCache.map(k => {
+    const active = k.id === kitabAktif.id;
+    return `
+      <button onclick="muatIsiKitab('${k.id}', 1)" class="px-4 py-2 rounded-xl text-xs font-semibold transition ${active ? 'bg-primary-container text-on-primary-container shadow' : 'bg-surface-container text-text-muted hover:text-text-primary gold-border'}">
+        ${esc(k.name)} (${Number(k.available).toLocaleString('id-ID')})
+      </button>
+    `;
+  }).join('');
+}
+
+async function muatIsiKitab(id, page) {
+  kitabAktif.id = id;
+  kitabAktif.page = Math.max(1, page);
+  renderPillsKitab();
+  const start = (kitabAktif.page - 1) * 10 + 1;
+  const end = kitabAktif.page * 10;
+  document.getElementById('page-indicator-hadits').textContent = `No. ${start} - ${end}`;
+  document.getElementById('hadits-list-container').innerHTML = `<div class="p-8 text-center text-sm text-primary rounded-2xl bg-surface gold-border">Memuat matan hadits...</div>`;
+
+  try {
+    const res = await fetch(`https://api.hadith.gading.dev/books/${id}?range=${start}-${end}`);
+    const json = await res.json();
+    kitabAktif.name = json.data?.name || id;
+    kitabAktif.list = json.data?.hadiths || [];
+    document.getElementById('info-kitab-aktif').textContent = `${kitabAktif.name} • Menampilkan ${start}-${end}`;
+    renderHaditsList();
+  } catch (e) {}
+}
+
+function gantiHalamanHadits(delta) { muatIsiKitab(kitabAktif.id, kitabAktif.page + delta); }
+
+function renderHaditsList() {
+  const q = document.getElementById('cari-hadits-input').value.toLowerCase();
+  const filtered = kitabAktif.list.filter(h => !q || String(h.id).toLowerCase().includes(q));
+  const container = document.getElementById('hadits-list-container');
+  container.innerHTML = filtered.map(h => `
+    <div class="rounded-2xl bg-surface p-6 sm:p-8 gold-border space-y-4">
+      <div class="flex items-center justify-between">
+        <span class="px-3 py-1 rounded-full bg-surface-container text-primary text-xs font-bold gold-border">${esc(kitabAktif.name)} • No. ${h.number}</span>
+        <span class="text-[11px] text-accent-emerald font-semibold">● Derajat Mutabar</span>
+      </div>
+      <div class="p-5 rounded-xl bg-surface-container-lowest gold-border">
+        <p class="arabic-text text-2xl text-right text-text-primary leading-loose" dir="rtl">${esc(h.arab)}</p>
+      </div>
+      <p class="text-sm text-on-surface leading-relaxed">${esc(h.id)}</p>
+    </div>
+  `).join('');
+}
+
+// ============================================================================
+// 8. CRUD ARSIP (JURNAL & KHUTBAH)
+// ============================================================================
+function renderArsip(jenis) {
+  const isJurnal = jenis === 'jurnal';
+  const list = isJurnal ? state.jurnal : state.khutbah;
+  const q = (document.getElementById(`cari-${jenis}-input`)?.value || '').toLowerCase();
+  const container = document.getElementById(`${jenis}-list-container`);
+
+  const filtered = list.filter(item => {
+    const pen = isJurnal ? item.penulis : item.khatib;
+    return !q || String(item.judul).toLowerCase().includes(q) || String(pen).toLowerCase().includes(q);
+  });
+
+  if (!filtered.length) {
+    container.innerHTML = `<div class="p-8 text-center text-text-muted rounded-2xl bg-surface gold-border">Belum ada data ${jenis}.</div>`;
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => {
+    const pen = isJurnal ? item.penulis : item.khatib;
+    const tgl = isJurnal ? item.tanggal_publikasi : item.tanggal_disampaikan;
+    return `
+      <div class="rounded-2xl bg-surface p-6 sm:p-7 gold-border space-y-3">
+        <div class="flex items-center justify-between text-xs text-text-muted">
+          <span class="px-2.5 py-0.5 rounded bg-surface-container text-primary font-semibold gold-border">${isJurnal ? 'Risalah Ilmiah' : 'Khutbah Jumat'}</span>
+          <span>📅 ${esc(tgl)}</span>
+        </div>
+        <h3 class="font-serif text-xl sm:text-2xl font-bold text-text-primary">${esc(item.judul)}</h3>
+        <p class="text-xs text-accent-emerald font-semibold">Oleh: ${esc(pen)}</p>
+        <p class="text-sm text-text-muted line-clamp-3">${esc(item.isi)}</p>
+        <div class="pt-3 flex flex-wrap items-center gap-2">
+          <button onclick="bacaDetailArsip('${jenis}','${item.id}')" class="px-4 py-2 rounded-xl bg-primary-container text-on-primary-container text-xs font-bold">Baca Selengkapnya</button>
+          <button onclick="bukaModalArsip('${jenis}','${item.id}')" class="admin-only px-3.5 py-2 rounded-xl bg-surface-container text-text-primary text-xs font-semibold gold-border">Ubah</button>
+          <button onclick="hapusArsipData('${jenis}','${item.id}')" class="admin-only px-3.5 py-2 rounded-xl bg-red-950/50 text-danger border border-red-500/30 text-xs font-semibold">Hapus</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function bukaModalArsip(jenis, id = '') {
+  document.getElementById('modal-arsip').classList.remove('hidden');
+  document.getElementById('modal-arsip-form').classList.remove('hidden');
+  document.getElementById('modal-arsip-baca').classList.add('hidden');
+  document.getElementById('arsip-jenis').value = jenis;
+  document.getElementById('arsip-id').value = id;
+
+  const list = jenis === 'jurnal' ? state.jurnal : state.khutbah;
+  const item = id ? list.find(x => String(x.id) === String(id)) : null;
+
+  document.getElementById('modal-arsip-title').textContent = (id ? 'Ubah ' : 'Tambah ') + (jenis === 'jurnal' ? 'Jurnal Ilmiah' : 'Naskah Khutbah');
+  document.getElementById('arsip-judul').value = item ? item.judul : '';
+  document.getElementById('arsip-penulis').value = item ? (jenis === 'jurnal' ? item.penulis : item.khatib) : '';
+  document.getElementById('arsip-tanggal').value = item ? (jenis === 'jurnal' ? item.tanggal_publikasi : item.tanggal_disampaikan) : new Date().toISOString().slice(0,10);
+  document.getElementById('arsip-isi').value = item ? item.isi : '';
+}
+
+function bacaDetailArsip(jenis, id) {
+  const list = jenis === 'jurnal' ? state.jurnal : state.khutbah;
+  const item = list.find(x => String(x.id) === String(id));
+  if (!item) return;
+  document.getElementById('modal-arsip').classList.remove('hidden');
+  document.getElementById('modal-arsip-form').classList.add('hidden');
+  document.getElementById('modal-arsip-baca').classList.remove('hidden');
+  document.getElementById('modal-arsip-title').textContent = item.judul;
+  document.getElementById('baca-arsip-meta').textContent = `${jenis === 'jurnal' ? item.penulis : item.khatib} • ${jenis === 'jurnal' ? item.tanggal_publikasi : item.tanggal_disampaikan}`;
+  document.getElementById('baca-arsip-isi').textContent = item.isi;
+}
+
+function tutupModalArsip() { document.getElementById('modal-arsip').classList.add('hidden'); }
+
+async function simpanArsipData() {
+  const jenis = document.getElementById('arsip-jenis').value;
+  const id = document.getElementById('arsip-id').value;
+  const judul = document.getElementById('arsip-judul').value.trim();
+  const penulis = document.getElementById('arsip-penulis').value.trim();
+  const tanggal = document.getElementById('arsip-tanggal').value;
+  const isi = document.getElementById('arsip-isi').value.trim();
+  if (!judul || !penulis || !tanggal || !isi) return alert('Seluruh kolom wajib diisi.');
+
+  const data = jenis === 'jurnal'
+    ? { judul, penulis, tanggal_publikasi: tanggal, isi }
+    : { judul, khatib: penulis, tanggal_disampaikan: tanggal, isi };
+
+  if (IS_PREVIEW) {
+    const arr = state[jenis];
+    if (id) {
+      const idx = arr.findIndex(x => String(x.id) === String(id));
+      if (idx >= 0) arr[idx] = { ...arr[idx], ...data };
+    } else arr.unshift({ id: Date.now(), ...data });
+  } else {
+    await apiFetch('/api/crud', { method: 'POST', body: JSON.stringify({ table: jenis, action: 'save', id, data }) });
+    await muatSemuaDataCloudflare();
+  }
+  tutupModalArsip();
+  renderArsip(jenis);
+}
+
+async function hapusArsipData(jenis, id) {
+  if (!confirm('Hapus naskah ini?')) return;
+  if (IS_PREVIEW) state[jenis] = state[jenis].filter(x => String(x.id) !== String(id));
+  else {
+    await apiFetch('/api/crud', { method: 'POST', body: JSON.stringify({ table: jenis, action: 'delete', id }) });
+    await muatSemuaDataCloudflare();
+  }
+  renderArsip(jenis);
+}
+
+// ============================================================================
+// 9. CRUD JADWAL PETUGAS
+// ============================================================================
+function renderJadwal() {
+  const fk = document.getElementById('filter-jadwal-kegiatan')?.value || '';
+  const fs = document.getElementById('filter-jadwal-status')?.value || '';
+
+  const khutbahTerdekat = state.jadwal.find(j => j.kegiatan === "Khutbah Jum'at") || state.jadwal[0];
+  const sorotanEl = document.getElementById('sorotan-jadwal-box');
+  if (sorotanEl) {
+    sorotanEl.innerHTML = khutbahTerdekat ? `
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="text-[10px] font-semibold text-primary uppercase tracking-wider block">Sorotan Penugasan Utama</span>
+          <h3 class="font-serif text-xl font-bold text-text-primary">${esc(khutbahTerdekat.kegiatan)} Terdekat</h3>
+        </div>
+        <span class="px-3 py-1 rounded-full bg-surface-container text-accent-emerald text-xs font-semibold emerald-border">Pekan Ini</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+        <div><span class="text-xs text-text-muted block">Tanggal</span><strong class="font-serif text-xl text-text-primary">${esc(khutbahTerdekat.tanggal)}</strong></div>
+        <div><span class="text-xs text-text-muted block">Petugas Utama</span><strong class="font-serif text-xl text-primary">${esc(khutbahTerdekat.petugas)}</strong></div>
+      </div>
+      <div class="p-4 rounded-xl bg-surface-container gold-border">
+        <p class="font-serif italic text-base text-text-primary">“${esc(khutbahTerdekat.tema || 'Membina Ketakwaan Jamaah')}”</p>
+      </div>
+    ` : `<div class="text-sm text-text-muted">Belum ada jadwal terdekat.</div>`;
+  }
+
+  const filtered = state.jadwal.filter(j => (!fk || j.kegiatan === fk) && (!fs || j.status === fs));
+  const tbody = document.getElementById('tabel-jadwal-body');
+  if (!tbody) return;
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-text-muted">Belum ada jadwal penugasan.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(j => `
+    <tr class="hover:bg-surface-container/50">
+      <td class="py-3.5 px-3 font-semibold text-text-primary whitespace-nowrap">${esc(j.tanggal)}</td>
+      <td class="py-3.5 px-3 text-primary font-medium">${esc(j.kegiatan)}</td>
+      <td class="py-3.5 px-3"><div class="font-bold text-text-primary">${esc(j.petugas)}</div><div class="text-xs text-text-muted">${esc(j.tema || '-')}</div></td>
+      <td class="py-3.5 px-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold text-accent-emerald emerald-border">● ${esc(j.status)}</span></td>
+      <td class="py-3.5 px-3 admin-only text-right whitespace-nowrap">
+        <button onclick="editJadwal('${j.id}')" class="text-xs text-primary hover:underline mr-3">Ubah</button>
+        <button onclick="hapusJadwal('${j.id}')" class="text-xs text-danger hover:underline">Hapus</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function editJadwal(id) {
+  const item = state.jadwal.find(x => String(x.id) === String(id));
+  if (!item) return;
+  document.getElementById('jadwal-id').value = item.id;
+  document.getElementById('jadwal-tanggal').value = item.tanggal;
+  document.getElementById('jadwal-kegiatan').value = item.kegiatan;
+  document.getElementById('jadwal-petugas').value = item.petugas;
+  document.getElementById('jadwal-tema').value = item.tema || '';
+  document.getElementById('jadwal-status').value = item.status;
+}
+
+function resetFormJadwal() {
+  document.getElementById('jadwal-id').value = '';
+  document.getElementById('jadwal-tanggal').value = '';
+  document.getElementById('jadwal-petugas').value = '';
+  document.getElementById('jadwal-tema').value = '';
+}
+
+async function simpanJadwal() {
+  const id = document.getElementById('jadwal-id').value;
+  const data = {
+    tanggal: document.getElementById('jadwal-tanggal').value,
+    kegiatan: document.getElementById('jadwal-kegiatan').value,
+    petugas: document.getElementById('jadwal-petugas').value.trim(),
+    tema: document.getElementById('jadwal-tema').value.trim(),
+    status: document.getElementById('jadwal-status').value
+  };
+  if (!data.tanggal || !data.petugas) return alert('Tanggal dan petugas wajib diisi.');
+
+  if (IS_PREVIEW) {
+    if (id) {
+      const idx = state.jadwal.findIndex(x => String(x.id) === String(id));
+      if (idx >= 0) state.jadwal[idx] = { ...state.jadwal[idx], ...data };
+    } else state.jadwal.unshift({ id: Date.now(), ...data });
+  } else {
+    await apiFetch('/api/crud', { method: 'POST', body: JSON.stringify({ table: 'jadwal', action: 'save', id, data }) });
+    await muatSemuaDataCloudflare();
+  }
+  resetFormJadwal();
+  renderJadwal();
+}
+
+async function hapusJadwal(id) {
+  if (!confirm('Hapus jadwal ini?')) return;
+  if (IS_PREVIEW) state.jadwal = state.jadwal.filter(x => String(x.id) !== String(id));
+  else {
+    await apiFetch('/api/crud', { method: 'POST', body: JSON.stringify({ table: 'jadwal', action: 'delete', id }) });
+    await muatSemuaDataCloudflare();
+  }
+  renderJadwal();
+}
+
+// ============================================================================
+// 10. CRUD TABUNGAN QURBAN
+// ============================================================================
+function getTargetHargaQurban(jenisHewan) {
+  if (jenisHewan === 'Sapi (1/7)') return Number(state.pengaturan.HargaSapi17) || 3250000;
+  if (jenisHewan === 'Sapi Utuh') return Number(state.pengaturan.HargaSapiUtuh) || 22750000;
+  return Number(state.pengaturan.HargaKambing) || 2900000;
+}
+
+function hitungSimulasiQurban() {
+  const hewan = document.getElementById('sim-hewan')?.value || 'Sapi (1/7)';
+  const bulan = Number(document.getElementById('sim-bulan')?.value || 6);
+  const el = document.getElementById('sim-hasil');
+  if (el) el.textContent = rp(Math.ceil(getTargetHargaQurban(hewan) / bulan));
+}
+
+function renderQurban() {
+  const q = (document.getElementById('cari-qurban-input')?.value || '').toLowerCase();
+  let totalDana = 0, jmlLunas = 0;
+
+  const enriched = state.qurban.map(r => {
+    const target = getTargetHargaQurban(r.target_hewan);
+    const terkumpul = Number(r.total_terkumpul) || 0;
+    const lunas = terkumpul >= target;
+    totalDana += terkumpul;
+    if (lunas) jmlLunas++;
+    return { ...r, target, terkumpul, status: lunas ? 'Lunas' : 'Angsuran Aktif' };
+  });
+
+  document.getElementById('qurban-metric-dana').textContent = rp(totalDana);
+  document.getElementById('qurban-metric-peserta').textContent = `${enriched.length} Mudhohi`;
+  document.getElementById('qurban-metric-lunas').textContent = `● ${jmlLunas} Lunas, ${enriched.length - jmlLunas} Mengangsur`;
+  document.getElementById('qurban-harga-sapi17-display').textContent = rp(getTargetHargaQurban('Sapi (1/7)'));
+  document.getElementById('qurban-harga-kambing-display').textContent = rp(getTargetHargaQurban('Kambing'));
+
+  const filtered = enriched.filter(r => !q || r.nama_jamaah.toLowerCase().includes(q));
+  const tbody = document.getElementById('tabel-qurban-body');
+  if (!tbody) return;
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-text-muted">Belum ada peserta tabungan qurban.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(r => `
+    <tr class="hover:bg-surface-container/50">
+      <td class="py-3.5 px-3 font-bold text-text-primary">${esc(r.nama_jamaah)}</td>
+      <td class="py-3.5 px-3 text-text-muted">${esc(r.target_hewan)}</td>
+      <td class="py-3.5 px-3 tabular-nums">${rp(r.target)}</td>
+      <td class="py-3.5 px-3 tabular-nums font-bold text-accent-emerald">${rp(r.terkumpul)}</td>
+      <td class="py-3.5 px-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${r.status === 'Lunas' ? 'text-accent-emerald emerald-border' : 'text-primary gold-border'}">${r.status}</span></td>
+      <td class="py-3.5 px-3 admin-only text-right whitespace-nowrap">
+        <button onclick="editQurban('${r.id}')" class="text-xs text-primary hover:underline mr-3">Ubah</button>
+        <button onclick="hapusQurban('${r.id}')" class="text-xs text-danger hover:underline">Hapus</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function editQurban(id) {
+  const item = state.qurban.find(x => String(x.id) === String(id));
+  if (!item) return;
+  document.getElementById('qurban-id').value = item.id;
+  document.getElementById('qurban-nama').value = item.nama_jamaah;
+  document.getElementById('qurban-hewan').value = item.target_hewan;
+  document.getElementById('qurban-terkumpul').value = item.total_terkumpul;
+}
+
+function resetFormQurban() {
+  document.getElementById('qurban-id').value = '';
+  document.getElementById('qurban-nama').value = '';
+  document.getElementById('qurban-terkumpul').value = '';
+}
+
+async function simpanQurban() {
+  const id = document.getElementById('qurban-id').value;
+  const nama_jamaah = document.getElementById('qurban-nama').value.trim();
+  const target_hewan = document.getElementById('qurban-hewan').value;
+  const total_terkumpul = Number(document.getElementById('qurban-terkumpul').value || 0);
+  if (!nama_jamaah) return alert('Nama mudhohi wajib diisi.');
+
+  const status = total_terkumpul >= getTargetHargaQurban(target_hewan) ? 'Lunas' : 'Belum Lunas';
+  const data = { nama_jamaah, target_hewan, total_terkumpul, status };
+
+  if (IS_PREVIEW) {
+    if (id) {
+      const idx = state.qurban.findIndex(x => String(x.id) === String(id));
+      if (idx >= 0) state.qurban[idx] = { ...state.qurban[idx], ...data };
+    } else state.qurban.unshift({ id: Date.now(), ...data });
+  } else {
+    await apiFetch('/api/crud', { method: 'POST', body: JSON.stringify({ table: 'qurban', action: 'save', id, data }) });
+    await muatSemuaDataCloudflare();
+  }
+  resetFormQurban();
+  renderQurban();
+}
+
+async function hapusQurban(id) {
+  if (!confirm('Hapus peserta qurban ini?')) return;
+  if (IS_PREVIEW) state.qurban = state.qurban.filter(x => String(x.id) !== String(id));
+  else {
+    await apiFetch('/api/crud', { method: 'POST', body: JSON.stringify({ table: 'qurban', action: 'delete', id }) });
+    await muatSemuaDataCloudflare();
+  }
+  renderQurban();
+}
+
+// ============================================================================
+// 11. CRUD KAS MASJID (PUBLIK RINGKASAN, ADMIN RINCIAN)
+// ============================================================================
+function renderKas() {
+  let masuk = 0, keluar = 0;
+  if (IS_PREVIEW || currentUser) {
+    state.kas.forEach(k => {
+      if (k.jenis === 'Pemasukan') masuk += Number(k.nominal) || 0;
+      else keluar += Number(k.nominal) || 0;
+    });
+  } else {
+    masuk = state.kasRingkasan.pemasukan || 0;
+    keluar = state.kasRingkasan.pengeluaran || 0;
+  }
+
+  document.getElementById('kas-card-masuk').textContent = rp(masuk);
+  document.getElementById('kas-card-keluar').textContent = rp(keluar);
+  document.getElementById('kas-card-saldo').textContent = rp(masuk - keluar);
+
+  const tbody = document.getElementById('tabel-kas-body');
+  if (!tbody) return;
+  const q = (document.getElementById('cari-kas-input')?.value || '').toLowerCase();
+  const filtered = state.kas.filter(k => !q || String(k.keterangan).toLowerCase().includes(q) || String(k.kategori).toLowerCase().includes(q));
+
+  if (!filtered.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-text-muted">Belum ada transaksi kas.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(k => {
+    const isMasuk = k.jenis === 'Pemasukan';
+    return `
+      <tr class="hover:bg-surface-container/50">
+        <td class="py-3.5 px-3 whitespace-nowrap">${esc(k.tanggal)}</td>
+        <td class="py-3.5 px-3"><span class="px-2.5 py-0.5 rounded-full text-xs font-semibold ${isMasuk ? 'text-accent-emerald emerald-border' : 'text-primary gold-border'}">${esc(k.jenis)}</span></td>
+        <td class="py-3.5 px-3 text-text-muted">${esc(k.kategori)}</td>
+        <td class="py-3.5 px-3 font-medium text-text-primary">${esc(k.keterangan)}</td>
+        <td class="py-3.5 px-3 text-right font-bold tabular-nums ${isMasuk ? 'text-accent-emerald' : 'text-primary'}">${isMasuk ? '+' : '-'} ${rp(k.nominal)}</td>
+        <td class="py-3.5 px-3 text-right whitespace-nowrap">
+          <button onclick="editKas('${k.id}')" class="text-xs text-primary hover:underline mr-3">Ubah</button>
+          <button onclick="hapusKas('${k.id}')" class="text-xs text-danger hover:underline">Hapus</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function editKas(id) {
+  const item = state.kas.find(x => String(x.id) === String(id));
+  if (!item) return;
+  document.getElementById('kas-id').value = item.id;
+  document.getElementById('kas-tanggal').value = item.tanggal;
+  document.getElementById('kas-jenis').value = item.jenis;
+  document.getElementById('kas-kategori').value = item.kategori;
+  document.getElementById('kas-keterangan').value = item.keterangan;
+  document.getElementById('kas-nominal').value = item.nominal;
+}
+
+function resetFormKas() {
+  document.getElementById('kas-id').value = '';
+  document.getElementById('kas-tanggal').value = '';
+  document.getElementById('kas-kategori').value = '';
+  document.getElementById('kas-keterangan').value = '';
+  document.getElementById('kas-nominal').value = '';
+}
+
+async function simpanKas() {
+  const id = document.getElementById('kas-id').value;
+  const data = {
+    tanggal: document.getElementById('kas-tanggal').value,
+    jenis: document.getElementById('kas-jenis').value,
+    kategori: document.getElementById('kas-kategori').value.trim() || 'Umum',
+    keterangan: document.getElementById('kas-keterangan').value.trim(),
+    nominal: Number(document.getElementById('kas-nominal').value || 0)
+  };
+  if (!data.tanggal || !data.keterangan || data.nominal <= 0) return alert('Lengkapi tanggal, keterangan, dan nominal.');
+
+  if (IS_PREVIEW) {
+    if (id) {
+      const idx = state.kas.findIndex(x => String(x.id) === String(id));
+      if (idx >= 0) state.kas[idx] = { ...state.kas[idx], ...data };
+    } else state.kas.unshift({ id: Date.now(), ...data });
+  } else {
+    await apiFetch('/api/crud', { method: 'POST', body: JSON.stringify({ table: 'kas', action: 'save', id, data }) });
+    await muatSemuaDataCloudflare();
+  }
+  resetFormKas();
+  renderKas();
+}
+
+async function hapusKas(id) {
+  if (!confirm('Hapus transaksi kas ini?')) return;
+  if (IS_PREVIEW) state.kas = state.kas.filter(x => String(x.id) !== String(id));
+  else {
+    await apiFetch('/api/crud', { method: 'POST', body: JSON.stringify({ table: 'kas', action: 'delete', id }) });
+    await muatSemuaDataCloudflare();
+  }
+  renderKas();
+}
+
+// ============================================================================
+// 12. ASISTEN AI & PENGATURAN WEB
+// ============================================================================
+function simpanKeyGemini() {
+  const k = document.getElementById('gemini-api-key').value.trim();
+  localStorage.setItem('dkm_gemini_key', k);
+  alert('Kunci API Gemini berhasil disimpan di peramban ini.');
+}
+
+async function kirimPesanAI() {
+  const prompt = document.getElementById('ai-prompt-input').value.trim();
+  if (!prompt) return;
+  const key = localStorage.getItem('dkm_gemini_key') || document.getElementById('gemini-api-key').value.trim();
+  if (!key) return alert('Masukkan Kunci API Gemini terlebih dahulu.');
+
+  const chatBox = document.getElementById('ai-chat-box');
+  chatBox.innerHTML += `<div class="p-3 rounded-xl bg-primary/20 text-text-primary ml-auto max-w-xl"><strong>Anda:</strong> ${esc(prompt)}</div>`;
+  document.getElementById('ai-prompt-input').value = '';
+
+  try {
+    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(key)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: `Anda adalah asisten resmi pengurus DKM Masjid Al Muhajirin. Jawab dengan santun: ${prompt}` }] }] })
+    });
+    const json = await res.json();
+    const reply = json?.candidates?.[0]?.content?.parts?.[0]?.text || 'Tidak ada respons dari Gemini.';
+    chatBox.innerHTML += `<div class="p-3.5 rounded-xl bg-surface gold-border text-on-surface max-w-2xl whitespace-pre-wrap"><strong>Asisten AI:</strong>\n${esc(reply)}</div>`;
+    chatBox.scrollTop = chatBox.scrollHeight;
+  } catch (e) {
+    chatBox.innerHTML += `<div class="p-3 rounded-xl bg-red-950/60 text-danger">Gagal memanggil Gemini API.</div>`;
+  }
+}
+
+function isiFormPengaturan() {
+  document.getElementById('set-nama-masjid').value = state.pengaturan.NamaMasjid || '';
+  document.getElementById('set-kota-sholat').value = state.pengaturan.KotaJadwal || '';
+  document.getElementById('set-wa').value = state.pengaturan.NomorWhatsApp || '';
+  document.getElementById('set-alamat').value = state.pengaturan.Alamat || '';
+  document.getElementById('set-harga-sapi17').value = state.pengaturan.HargaSapi17 || 3250000;
+  document.getElementById('set-harga-kambing').value = state.pengaturan.HargaKambing || 2900000;
+  document.getElementById('set-harga-sapiutuh').value = state.pengaturan.HargaSapiUtuh || 22750000;
+}
+
+function terapkanPengaturanUI() {
+  document.getElementById('hero-nama-masjid').textContent = state.pengaturan.NamaMasjid || 'Masjid Al Muhajirin';
+  document.getElementById('kontak-wa-link').textContent = state.pengaturan.NomorWhatsApp || '0812-3456-7890';
+  document.getElementById('kontak-alamat-teks').textContent = state.pengaturan.Alamat || '';
+}
+
+async function simpanPengaturanWeb() {
+  const payload = {
+    NamaMasjid: document.getElementById('set-nama-masjid').value.trim(),
+    KotaJadwal: document.getElementById('set-kota-sholat').value.trim(),
+    NomorWhatsApp: document.getElementById('set-wa').value.trim(),
+    Alamat: document.getElementById('set-alamat').value.trim(),
+    HargaSapi17: String(document.getElementById('set-harga-sapi17').value || 3250000),
+    HargaKambing: String(document.getElementById('set-harga-kambing').value || 2900000),
+    HargaSapiUtuh: String(document.getElementById('set-harga-sapiutuh').value || 22750000)
+  };
+  Object.assign(state.pengaturan, payload);
+
+  if (!IS_PREVIEW) {
+    await apiFetch('/api/pengaturan', { method: 'POST', body: JSON.stringify(payload) });
+  }
+  terapkanPengaturanUI();
+  muatJadwalSholatAPI();
+  alert('Pengaturan berhasil disimpan.');
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  initCarousel();
+  terapkanPengaturanUI();
+  muatJadwalSholatAPI();
+  updateAuthUI();
+  await muatSemuaDataCloudflare();
+});
+</script>
+</body>
+</html>
